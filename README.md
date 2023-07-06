@@ -35,3 +35,20 @@ You should have the following installed:
     ```bash
     anchor test
     ```
+
+# Run the frontend
+
+## To run the mainApp
+- `cd App`, 
+
+- `cd mainpage`
+- install dependencies `npm install--legacy-peer-deps`
+- run the development `npm run dev`
+
+**Open another terminal
+- `cd dashboard`
+- install dependencies `npm install--legacy-peer-deps`
+- run the development `npm run dev`
+
+## Enter your browser and input http://localhost:5173
+

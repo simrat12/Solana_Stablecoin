@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Transfer};
+use anchor_spl::token::{self, Transfer, MintTo};
 pub mod state;
 use state::{PriceFeed, ErrorCode};
 use anchor_lang::solana_program::entrypoint::ProgramResult;
@@ -68,15 +68,36 @@ pub mod sol_anchor_contract {
         if value_of_collateral < (amount * 100) as f64 {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
+    
+        let cpi_accounts = token::MintTo {
+            mint: ctx.accounts.debt_token_mint.to_account_info().clone(),
+            to: ctx.accounts.borrower_debt_token_account.to_account_info().clone(),
+            authority: ctx.accounts.admin.to_account_info().clone(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info().clone();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::mint_to(cpi_ctx, amount)?;
+    
         borrower.borrowed += amount as f64;
         Ok(())
     }
+
 
     pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
         if borrower.borrowed < (amount as f64) {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
+    
+        let cpi_accounts = token::Burn {
+            mint: ctx.accounts.debt_token_mint.to_account_info().clone(),
+            from: ctx.accounts.borrower_debt_token_account.to_account_info().clone(),
+            authority: ctx.accounts.admin.to_account_info().clone(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info().clone();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::burn(cpi_ctx, amount)?;
+    
         borrower.borrowed -= amount as f64;
         Ok(())
     }
@@ -128,6 +149,10 @@ pub struct Borrow<'info> {
     #[account(mut)]
     pub borrower: Account<'info, Borrower>,
     pub pyth_loan_account: Account<'info, PriceFeed>,
+    pub debt_token_mint: Account<'info, token::Mint>,
+    #[account(mut)]
+    pub borrower_debt_token_account: Account<'info, Borrower>,
+    pub token_program: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
@@ -135,7 +160,12 @@ pub struct Repay<'info> {
     pub admin: Account<'info, Admin>,
     #[account(mut)]
     pub borrower: Account<'info, Borrower>,
+    pub debt_token_mint: Account<'info, token::Mint>,
+    #[account(mut)]
+    pub borrower_debt_token_account: Account<'info, Borrower>,
+    pub token_program: AccountInfo<'info>,
 }
+
 
 #[derive(Accounts)]
 pub struct GetHealthFactor<'info> {

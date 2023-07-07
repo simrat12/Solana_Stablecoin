@@ -1,9 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Transfer};
-use pyth_client;
+pub mod state;
+use state::{PriceFeed, ErrorCode};
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
+
 declare_id!("GFPM2LncpbWiLkePLs3QjcLVPw31B2h23FwFfhig79fh");
+
 
 #[program]
 pub mod sol_anchor_contract {
@@ -25,7 +28,7 @@ pub mod sol_anchor_contract {
         token::transfer(cpi_ctx, amount)?;
         
         let borrower = &mut ctx.accounts.borrower;
-        borrower.collateral += amount;
+        borrower.collateral += amount as f64;
         Ok(())
     }
 
@@ -38,7 +41,7 @@ pub mod sol_anchor_contract {
             return Err(error!(ErrorCode::InvalidOwner));
         }
 
-        if borrower.collateral < amount {
+        if borrower.collateral < (amount as f64) {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
 
@@ -51,35 +54,41 @@ pub mod sol_anchor_contract {
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
         token::transfer(cpi_ctx, amount)?;
 
-        borrower.collateral -= amount;
+        borrower.collateral -= amount as f64;
         Ok(())
     }
 
     pub fn borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
-        let price = pyth_client::get_price("H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG");
-        let value_of_collateral = borrower.collateral * price; 
-        if value_of_collateral < amount * 100 {
+        let loan_feed = &ctx.accounts.pyth_loan_account;
+        let current_timestamp1 = Clock::get()?.unix_timestamp;
+        let loan_price = loan_feed.get_price_no_older_than(current_timestamp1, 60).ok_or(ErrorCode::PythOffline)?;
+        let loan_max_price = loan_price.price.checked_add(loan_price.conf as i64).ok_or(ErrorCode::Overflow)?;
+        let value_of_collateral = borrower.collateral * loan_max_price as f64; 
+        if value_of_collateral < (amount * 100) as f64 {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
-        borrower.borrowed += amount;
+        borrower.borrowed += amount as f64;
         Ok(())
     }
 
     pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
-        if borrower.borrowed < amount {
+        if borrower.borrowed < (amount as f64) {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
-        borrower.borrowed -= amount;
+        borrower.borrowed -= amount as f64;
         Ok(())
     }
 
-    pub fn get_health_factor(ctx: Context<GetHealthFactor>) -> ProgramResult {
+    pub fn get_health_factor(ctx: Context<GetHealthFactor>) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
-        let price = pyth_client::get_price("<key_of_SOL/USD_account>");
-        let value_of_collateral = borrower.collateral * price;
-        borrower.health_factor = value_of_collateral / (borrower.borrowed * 100);
+        let collateral_feed = &ctx.accounts.pyth_collateral_account;
+        let current_timestamp1 = Clock::get()?.unix_timestamp;
+        let loan_price = collateral_feed.get_price_no_older_than(current_timestamp1, 60).ok_or(ErrorCode::PythOffline)?;
+        let loan_max_price = loan_price.price.checked_add(loan_price.conf as i64).ok_or(ErrorCode::Overflow)?;
+        let value_of_collateral = borrower.collateral * loan_max_price as f64;
+        borrower.health_factor = value_of_collateral / (borrower.borrowed * 100.0);
         Ok(())
     }
 }
@@ -118,6 +127,7 @@ pub struct Borrow<'info> {
     pub admin: Account<'info, Admin>,
     #[account(mut)]
     pub borrower: Account<'info, Borrower>,
+    pub pyth_loan_account: Account<'info, PriceFeed>,
 }
 
 #[derive(Accounts)]
@@ -131,6 +141,7 @@ pub struct Repay<'info> {
 pub struct GetHealthFactor<'info> {
     #[account(mut)]
     pub borrower: Account<'info, Borrower>,
+    pub pyth_collateral_account: Account<'info, PriceFeed>,
 }
 
 #[account]
@@ -140,19 +151,14 @@ pub struct Admin {
 
 #[account]
 pub struct Borrower {
-    pub collateral: u64,
-    pub borrowed: u64,
-    pub health_factor: u64,
+    pub collateral: f64,
+    pub borrowed: f64,
+    pub health_factor: f64,
     pub owner: Pubkey,
 }
 
-#[error_code]
-pub enum ErrorCode {
-    #[msg("Not enough collateral.")]
-    NotEnoughCollateral,
-    #[msg("You are not the owner!.")]
-    InvalidOwner,
-}
+
+
 
 
 

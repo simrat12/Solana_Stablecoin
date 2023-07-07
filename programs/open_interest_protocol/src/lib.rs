@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Transfer, SplAccount};
+use anchor_spl::token::{self, Transfer};
 use pyth_client;
+use anchor_lang::solana_program::entrypoint::ProgramResult;
 
 declare_id!("GFPM2LncpbWiLkePLs3QjcLVPw31B2h23FwFfhig79fh");
 
@@ -13,7 +14,7 @@ pub mod sol_anchor_contract {
         Ok(())
     }
 
-    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
+    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         let cpi_accounts = Transfer {
             from: ctx.accounts.from.to_account_info().clone(),
             to: ctx.accounts.to.to_account_info().clone(),
@@ -28,10 +29,17 @@ pub mod sol_anchor_contract {
         Ok(())
     }
 
-    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> ProgramResult {
+    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
+        let from = &mut ctx.accounts.from;
+        let user = &ctx.accounts.user;
+    
+        if from.owner != *user.key {
+            return Err(error!(ErrorCode::InvalidOwner));
+        }
+
         if borrower.collateral < amount {
-            return Err(ErrorCode::NotEnoughCollateral.into());
+            return Err(error!(ErrorCode::NotEnoughCollateral));
         }
 
         let cpi_accounts = Transfer {
@@ -47,21 +55,21 @@ pub mod sol_anchor_contract {
         Ok(())
     }
 
-    pub fn borrow(ctx: Context<Borrow>, amount: u64) -> ProgramResult {
+    pub fn borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
         let price = pyth_client::get_price("H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG");
         let value_of_collateral = borrower.collateral * price; 
         if value_of_collateral < amount * 100 {
-            return Err(ErrorCode::NotEnoughCollateral.into());
+            return Err(error!(ErrorCode::NotEnoughCollateral));
         }
         borrower.borrowed += amount;
         Ok(())
     }
 
-    pub fn repay(ctx: Context<Repay>, amount: u64) -> ProgramResult {
+    pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
         let borrower = &mut ctx.accounts.borrower;
         if borrower.borrowed < amount {
-            return Err(ErrorCode::NotEnoughCollateral.into());
+            return Err(error!(ErrorCode::NotEnoughCollateral));
         }
         borrower.borrowed -= amount;
         Ok(())
@@ -78,19 +86,18 @@ pub mod sol_anchor_contract {
 
 #[derive(Accounts)]
 pub struct Init<'info> {
-    #[account(init)]
-    pub admin: ProgramAccount<'info, Admin>,
+    pub admin: Account<'info, Admin>,
     pub rent: Sysvar<'info, Rent>,
 }
 
 #[derive(Accounts)]
 pub struct Deposit<'info> {
-    pub admin: ProgramAccount<'info, Admin>,
+    pub admin: Account<'info, Admin>,
     #[account(mut)]
-    pub borrower: ProgramAccount<'info, Borrower>,
-    #[account(mut, "&from.owner == user.key")]
-    pub from: Account<'info, SplAccount>,
-    pub to: Account<'info, SplAccount>,
+    pub borrower: Account<'info, Borrower>,
+    #[account(mut)]
+    pub from: Account<'info, Borrower>,
+    pub to: Account<'info, Borrower>,
     pub user: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
 }
@@ -98,32 +105,32 @@ pub struct Deposit<'info> {
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
     #[account(mut)]
-    pub borrower: ProgramAccount<'info, Borrower>,
-    #[account(mut, "&from.owner == user.key")]
-    pub from: Account<'info, SplAccount>,
-    pub to: Account<'info, SplAccount>,
+    pub borrower: Account<'info, Borrower>,
+    #[account(mut)]
+    pub from: Account<'info, Borrower>,
+    pub to: Account<'info, Borrower>,
     pub user: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Borrow<'info> {
-    pub admin: ProgramAccount<'info, Admin>,
+    pub admin: Account<'info, Admin>,
     #[account(mut)]
-    pub borrower: ProgramAccount<'info, Borrower>,
+    pub borrower: Account<'info, Borrower>,
 }
 
 #[derive(Accounts)]
 pub struct Repay<'info> {
-    pub admin: ProgramAccount<'info, Admin>,
+    pub admin: Account<'info, Admin>,
     #[account(mut)]
-    pub borrower: ProgramAccount<'info, Borrower>,
+    pub borrower: Account<'info, Borrower>,
 }
 
 #[derive(Accounts)]
 pub struct GetHealthFactor<'info> {
     #[account(mut)]
-    pub borrower: ProgramAccount<'info, Borrower>,
+    pub borrower: Account<'info, Borrower>,
 }
 
 #[account]
@@ -136,11 +143,18 @@ pub struct Borrower {
     pub collateral: u64,
     pub borrowed: u64,
     pub health_factor: u64,
+    pub owner: Pubkey,
 }
 
-#[error]
+#[error_code]
 pub enum ErrorCode {
     #[msg("Not enough collateral.")]
     NotEnoughCollateral,
+    #[msg("You are not the owner!.")]
+    InvalidOwner,
 }
+
+
+
+
 

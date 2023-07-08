@@ -48,7 +48,7 @@ You should have the following installed:
 **Open another terminal
 - `cd dashboard`
 - install dependencies `npm install--legacy-peer-deps`
-- run the development `npm run dev`
+- run the development `npm start`
 
 ## Enter your browser and input http://localhost:5173
 

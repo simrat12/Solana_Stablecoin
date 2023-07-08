@@ -1,9 +1,10 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export default function(app) {
   // Proxy requests starting with '/app1' to App1
   app.use(
-    '../../App/mainpage/',
+    '../../app/mainpage/',
     createProxyMiddleware({
       target: 'http://localhost:5173', // Replace with the actual URL of App1
       changeOrigin: true,
@@ -12,10 +13,10 @@ export default function(app) {
 
   // Proxy requests starting with '/app2' to App2
   app.use(
-    '../../App/dashboard/',
+    '../../app/dashboard/',
     createProxyMiddleware({
-      target: 'http://localhost:5174', // Replace with the actual URL of App2
+      target: 'http://localhost:3000', // Replace with the actual URL of App2
       changeOrigin: true,
     })
   );
-}
+};

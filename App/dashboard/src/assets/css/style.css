@@ -10,7 +10,7 @@
 		- Global Styles
 		- Typography
 		- Boxed Body
-		- Light Body
+		- Light Body 
 		- Preloader
 		- Back To Top
 	+ Header
@@ -76,13 +76,17 @@ body {
   border: 0;
   margin: 0;
   padding: 0;
-  background: #111;
+  background-image: url('../images/backgrounds/coming-soon.jpg');
+  background-size: cover;
+  background-color: rgba(0, 0, 0, 0.5);
+
 }
 
 .wrapper {
   position: relative;
   overflow: hidden;
 }
+/* 
 
 a:link,
 a:hover,
@@ -784,7 +788,7 @@ ul.user li.sign-in a {
 .site-nav-inner {
   position: absolute;
   z-index: 100;
-  background: #111;
+  background: rgb(6, 116, 116);
   text-align: center;
   width: 100%;
   left: 0;
@@ -2416,7 +2420,7 @@ ul.nav.nav-tabs li a:hover, ul.nav.nav-tabs li.active a:hover {
 }
 
 .team-member-caption .list li a {
-  color: #fff;
+  color: #ffffff;
 }
 
 .team-member-caption .list li + li {

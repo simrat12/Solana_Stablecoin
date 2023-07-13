@@ -1,30 +1,18 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import logo from '../assets/images/backgrounds/sol-up-logo.png';
+import React from "react";
+import { Link } from "react-router-dom";
+import logo from "../assets/images/backgrounds/sol-up-logo.png";
+import web3 from "../web3"; // Import the web3 instance
 
-const Navbar = () => {
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-
-  const connectWallet = () => {
-    if (window.ethereum) {
-      window.ethereum.request({ method: 'eth_requestAccounts' })
-        .then(() => {
-          setIsWalletConnected(true);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      window.location.href = 'https://metamask.io/download.html';
-    }
-  };
-
-  const disconnectWallet = () => {
-    setIsWalletConnected(false);
-  };
+const Navbar = ({
+  isWalletConnected,
+  walletAddress,
+  connectWallet,
+  disconnectWallet,
+}) => {
+  const truncatedAddress = isWalletConnected ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "";
 
   return (
-    <header className="header" style={{ backgroundColor: '#262f30' }}>
+    <header className="header fixed-top" style={{ backgroundColor: "#262f30" }}>
       <div className="container">
         <div className="row">
           {/* Logo Starts */}
@@ -77,10 +65,13 @@ const Navbar = () => {
               {isWalletConnected ? (
                 <>
                   <li className="wallet-address">
-                    <span>{'0x1234...abcd'}</span>
+                  <span>{truncatedAddress}</span>
                   </li>
                   <li className="disconnect-wallet">
-                    <button className="btn btn-primary" onClick={disconnectWallet}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={disconnectWallet}
+                    >
                       Disconnect
                     </button>
                   </li>
@@ -88,11 +79,13 @@ const Navbar = () => {
               ) : (
                 <>
                   <li className="connect-wallet">
-                    <button className="btn btn-primary" onClick={connectWallet}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={connectWallet}
+                    >
                       <i className="fa fa-plug"></i> Connect Wallet
                     </button>
                   </li>
-                  
                 </>
               )}
             </ul>
@@ -130,21 +123,35 @@ const Navbar = () => {
             <div className="collapse navbar-collapse navbar-responsive-collapse">
               {/* Main Menu Starts */}
               <ul className="nav navbar-nav">
-                <li>
-                  <Link to="/" activeClassName="active">Home</Link>
-                </li>
-                <li>
-                  <Link to="/statistics">Statistics</Link>
-                </li>
-                <li>
-                  <Link to="/services">Services</Link>
-                </li>
-                <li>
-                  <Link to="/pricing">Pricing</Link>
-                </li>
-                <li>
-                  <Link to="/contact">Contact</Link>
-                </li>
+                {isWalletConnected ? (
+                  <>
+                    <li>
+                      <Link to="/" activeClassName="active">
+                        Home
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/statistics">Statistics</Link>
+                    </li>
+                    <li>
+                      <Link to="/services">Services</Link>
+                    </li>
+                    <li>
+                      <Link to="/pricing">Pricing</Link>
+                    </li>
+                    <li>
+                      <Link to="/contact">Contact</Link>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li>
+                      <Link to="/" activeClassName="active">
+                        Home
+                      </Link>
+                    </li>
+                  </>
+                )}
               </ul>
               {/* Main Menu Ends */}
             </div>

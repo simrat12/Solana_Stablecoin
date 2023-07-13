@@ -130,64 +130,92 @@ pub mod sol_anchor_contract {
 
 #[derive(Accounts)]
 pub struct Init<'info> {
+    /// CHECK: The `admin` account needs to be initialized, and its address needs
+    /// to be derived from the `borrower` constant and the user's public key.
     #[account(init, seeds=[b"borrower".as_ref(), user.key.as_ref()], bump, payer=user, space=8+8+32+8+1)]
     pub admin: Account<'info, Admin>,
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
     pub borrower: Account<'info, Borrower>,
     #[account(mut)]
     pub user: Signer<'info>,
+    /// CHECK: The `system_program` is not constrained since we assume it is the System program which does not require any specific checks.
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
 pub struct Deposit<'info> {
+    /// CHECK: Ensure the `from` account is mutable so we can debit funds from it.
     #[account(mut)]
     pub from: AccountInfo<'info>,
+    /// CHECK: Ensure the `to` account is mutable so we can credit funds to it.
     #[account(mut)]
     pub to: AccountInfo<'info>,
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
+    /// to be derived from the `borrower` constant, the user's public key, and the provided bump seed.
     #[account(mut, seeds=[b"borrower".as_ref(), user.key.as_ref()], bump)]
     pub borrower: Account<'info, Borrower>,
+    /// CHECK: The `user` account needs to be mutable and its address needs
     pub user: Signer<'info>,
+    /// CHECK: The `token_program` is not constrained since we assume it is the SPL Token program which does not require any specific checks.
     pub token_program: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
+    /// to be derived from the `borrower` constant and the user's public key.
     #[account(mut, seeds=[b"borrower".as_ref(), user.key.as_ref()], bump)]
     pub borrower: Account<'info, Borrower>,
+    /// CHECK: Ensure the `from` account is mutable so we can debit funds from it.
     #[account(mut)]
     pub from: AccountInfo<'info>,
+    /// CHECK: Ensure the `to` account is mutable so we can credit funds to it.
     #[account(mut)]
     pub to: AccountInfo<'info>,
     pub user: Signer<'info>,
+    /// CHECK: The `token_program` is not constrained since we assume it is the SPL Token program which does not require any specific checks.
     pub token_program: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Borrow<'info> {
     pub admin: Account<'info, Admin>,
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
+    /// to be derived from the user's public key.
     #[account(
         seeds = [user.key().as_ref()],
         bump,
     )]
     pub borrower: Account<'info, Borrower>,
+    /// CHECK: Ensure the `borrower_debt_token_account` account is mutable so we can credit funds to it.
     pub pyth_loan_account: Account<'info, PriceFeed>,
+    /// CHECK: Ensure the `borrower_debt_token_account` account is mutable so we can credit funds to it.
     pub borrower_debt_token_account: Account<'info, Borrower>,
+    /// CHECK: Ensure the `debt_token_mint` account is mutable so we can debit funds from it.
     pub debt_token_mint: Account<'info, Mint>,
+    /// CHECK: The `token_program` is not constrained since we assume it is the SPL Token program which does not require any specific checks.
     pub token_program: AccountInfo<'info>,
+    /// CHECK: The `user` account needs to be mutable and its address needs
     pub user: Signer<'info>,
 }
 
 #[derive(Accounts)]
 pub struct Repay<'info> {
     pub admin: Account<'info, Admin>,
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
+    /// to be derived from the user's public key.
     #[account(
         seeds = [user.key().as_ref()],
         bump,
     )]
     pub borrower: Account<'info, Borrower>,
+    /// CHECK: Ensure the `borrower_debt_token_account` account is mutable so we can credit funds to it.
     pub borrower_debt_token_account: Account<'info, Borrower>,
+    /// CHECK: Ensure the `debt_token_mint` account is mutable so we can debit funds from it.
     pub debt_token_mint: Account<'info, Mint>,
+    /// CHECK: The `token_program` is not constrained since we assume it is the SPL Token program which does not require any specific checks.
     pub token_program: AccountInfo<'info>,
+    /// CHECK: The `user` account needs to be mutable and its address needs
     pub user: Signer<'info>,
 }
 
@@ -195,11 +223,14 @@ pub struct Repay<'info> {
 pub struct GetHealthFactor<'info> {
     pub admin: Account<'info, Admin>,
     pub user: Signer<'info>,
+    /// CHECK: The `borrower` account needs to be mutable and its address needs
+    /// to be derived from the user's public key.
     #[account(
         seeds = [user.key().as_ref()],
         bump,
     )]
     pub borrower: Account<'info, Borrower>,
+    /// CHECK: Ensure the `borrower_debt_token_account` account is mutable so we can credit funds to it.
     pub pyth_collateral_account: Account<'info, PriceFeed>,
 }
 
@@ -221,20 +252,27 @@ pub struct Borrower {
 #[derive(Clone)]
 #[derive(Accounts)]
 pub struct MintTokens<'info> {
+    /// CHECK: Ensure the `borrower` account is mutable so we can debit funds from it.
     #[account(mut)]
     pub borrower: AccountInfo<'info>,
+    /// CHECK: Ensure the `lender` account is mutable so we can credit funds to it.
     #[account(mut)]
     pub lender: AccountInfo<'info>,
+    /// CHECK: The `loan` account needs to be initialized and the `borrower` needs to be the payer for it.
     #[account(init, payer = borrower, space=9000)]
     pub loan: Account<'info, Loan>,
+    /// CHECK: Ensure `mint` is mutable and that its `mint_authority` matches the `mint_authority`'s key.
     #[account(
         mut,
         constraint = mint.mint_authority == *mint_authority.key,
     )]
     pub mint: Account<'info, Mint>,
     #[account(signer)]
+    /// CHECK: The `mint_authority` account needs to be mutable and its address needs
     pub mint_authority: AccountInfo<'info>,
+    /// CHECK: The `system_program` is not constrained since we assume it is the System program which does not require any specific checks.
     pub system_program: AccountInfo<'info>,
+    /// CHECK: The `token_program` is not constrained since we assume it is the SPL Token program which does not require any specific checks.
     pub token_program: AccountInfo<'info>,
 }
 
@@ -251,6 +289,7 @@ pub struct Mint {
     mint_authority: Pubkey,
     supply: u64,
 }
+
 
 
 

@@ -1,34 +1,43 @@
 import "./hero.css";
-import miner from '../../../assets/logo.jpg'
+import miner from "../../../assets/logo.jpg";
 import sol1 from "../../../assets/sol1.jpg";
 import { AiOutlinePlus } from "react-icons/ai";
 import sol2 from "../../../assets/sol2.jpg";
 const Hero = () => {
+  const handleConnectWallet = () => {
+    // Redirect the user to the wallet dashboard after clicking the button
+    window.location.href = "http://localhost:3000/";
+  };
+
   return (
     <div className="hero">
       <div className="big-card">
         <div className="card-left">
           <div className="top-ctas">
-            <div className="top-cta1">Lending made easy</div>
-            <div className="top-cta2">Solstable is here to Help</div>
+            <div className="top-cta1">Decentralized Lending</div>
+            <div className="top-cta2">
+              Experience the future of lending on Solana.
+            </div>
           </div>
           <div className="card-texts">
             <p className="card-heading-text">
-              Start your Business with great capital Journey today.
+              Secure, transparent, and hassle-free lending on the Solana
+              blockchain..
             </p>
-            <p className="card-normal-text">Get your Loan today </p>
+            <p className="card-normal-text">
+              Unlocking Financial Opportunities{" "}
+            </p>
           </div>
-          
         </div>
         <div className="card-right">
           <img src={miner} alt="Antminner" />
           <div className="image-text">
-            <p className="card-right-name">Borrow 300sol</p>
-            <p>Just to fill some</p>
+            <p className="card-right-name">Borrow and Lend</p>
+            <p>Decentralized Lending</p>
           </div>
-          <div className="btc-per-time">
+          {/* <div className="btc-per-time">
             <p>0.4354556 BTC Daily</p>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="middle-cards">
@@ -37,9 +46,9 @@ const Hero = () => {
             <img src="" alt="" />
           </div>
           <div className="middle-card-texts">
-            <p className="middle-card-text-title">Stable Income</p>
+            <p className="middle-card-text-title">Instant Transactions</p>
             <p className="middle-card-text-desc">
-              Our powerful mining pool guarantees a stable income
+              Enjoy near-instantaneous borrowing and lending transactions
             </p>
           </div>
         </div>
@@ -51,8 +60,8 @@ const Hero = () => {
           <div className="middle-card-texts">
             <p className="middle-card-text-title">Reliable security system</p>
             <p className="middle-card-text-desc">
-              A thoughtful and reliable security system that protects the assets
-              and privacy of users
+              Utilize robust smart contract development practices and audited
+              code to ensure the security of user funds
             </p>
           </div>
         </div>
@@ -62,10 +71,11 @@ const Hero = () => {
             <img src="" alt="" />
           </div>
           <div className="middle-card-texts">
-            <p className="middle-card-text-title">Multiple tokens</p>
+            <p className="middle-card-text-title">Global Accessibility</p>
             <p className="middle-card-text-desc">
-              Currently, the Solstable pool supports Bitcoin (BTC), Etherium
-              (ETH) and Bitcoin Cash (BACK)
+              Reach a global audience with your lending application, enabling
+              users from anywhere in the world to participate in the
+              decentralized lending ecosystem powered by Solana.
             </p>
           </div>
         </div>
@@ -107,17 +117,16 @@ const Hero = () => {
         <div className="what-is-left">
           <div className="what-is-texts">
             <div className="what-is-title">
-              <p>What is Solstable?</p>
+              <p>Instant Transactions</p>
             </div>
             <p>
-              Solstable is a simple and affordable cloud mining service. The main
-              purpose of which is to introduce a wider audience to the world of
-              bitcoin and other cryptocurrencies. Solstable has a huge number of
-              ASIIC miners who mine bitcoin daily on the Solstable pool.
+              Enjoy near-instantaneous borrowing and lending transactions on the
+              Solana blockchain, eliminating lengthy approval processes and
+              delays commonly associated with traditional financial systems.
             </p>
           </div>
           <div className="what-is-button">
-            <button>Try from here</button>
+            <button onClick={handleConnectWallet}>Borrow and lend </button>
           </div>
         </div>
         <div className="right-image">
@@ -129,14 +138,13 @@ const Hero = () => {
         <div className="earn-left">
           <div className="earn-texts">
             <div className="earn-title">
-              <p>Earn Money with Solstable?</p>
+              <p>Competitive Interest Rates:</p>
             </div>
             <p>
-              To start mining bitcoins, just select a miner equipment from your
-              personal Solstable account, each miner has a different cost and
-              rental period. Each equipment generates a unique account of
-              bitcoin daily. These coins are deposited to your personal account.
-              You just have to collect your coins everyday without any cost
+              Benefit from competitive interest rates that are determined by the
+              supply and demand dynamics of the lending market, allowing
+              borrowers to access funds at affordable rates and lenders to earn
+              attractive returns.
             </p>
           </div>
         </div>
@@ -151,34 +159,23 @@ const Hero = () => {
       </div>
       <div className="staggers">
         <div className="stagger one">
-          <p className="title">Extensive range of services</p>
+          <p className="title">Seamless Integration</p>
           <p>
-            The Solstable pool is an important part of the global Solstable
-            ecosystem. Uses thesame accounting system as our cloud minning
-            service to ensure security. The Solstable and Solstable pool aims to
-            erase the line between mining and trading by providing users with a
-            wide range of mining solutions.
+          Seamlessly integrate your Solana lending application with popular decentralized finance (DeFi) protocols and liquidity pools to enhance liquidity and provide users with a wider range of lending options.
           </p>
         </div>
 
         <div className="stagger two">
-          <p className="title">Reliable mining solutions</p>
+          <p className="title">Automated Collateral Management:</p>
           <p>
-            Solstable provides a comprehensive mining platform with extensive
-            experience working with mining pools and competitive mining
-            technologies. We Strive to provide high quality and innovative cloud
-            mining service for users who need comprehensive mining services.
+          Implement smart contract functionality that automates collateral management, ensuring efficient loan liquidation processes in the event of default, reducing counterparty risk for lenders.
           </p>
         </div>
 
         <div className="stagger three">
-          <p className="title">Guarantee of services</p>
+          <p className="title">User Reputation System</p>
           <p>
-            Solstable strives to provide qualified projects with opportunities
-            and improve industry standard practices to achieve consensus in the
-            community. We strive to introduce more people around the world to
-            blockchain technology and outstanding projects as well as contribute
-            towards the sustainable and stable development of our ecosystem.
+          Introduce a reputation system that allows borrowers and lenders to build trust based on their past interactions, promoting responsible lending behavior and reducing the risk of defaults. Also, Enable borrowing and lending with a variety of digital assets, including cryptocurrencies and tokenized assets, providing users with flexibility and diverse lending options.
           </p>
         </div>
       </div>
@@ -186,12 +183,12 @@ const Hero = () => {
         <p className="title">FAQ</p>
         <div className="faq-lists">
           {[
-            "What is Cloud Minning?",
-            "How does it work?",
-            "when can I withdraw funds from my account?",
-            "Can I rent several different miners?",
-            "What payment method do you accept and what coins can be mined?",
-            "Do you have an affiliate program and how does it work?",
+            "How does the lending process work on Solstable?",
+            "What is the minimum and maximum amount that can be borrowed on the platform?",
+            "What are the interest rates offered for borrowing on Solstable?",
+            "How is collateral handled in the lending process, and what happens in the event of default?",
+            "Which digital assets are supported for lending and borrowing on the platform?",
+            "How do I create an account and connect my Solana wallet to Solstable?",
           ].map((list, id) => (
             <div key={id} className="faq-list">
               <p>{list}</p>
@@ -202,8 +199,8 @@ const Hero = () => {
       </div>
       <div className="end">
         <p>Start your bitcoin mining journey today!</p>
-        <button>
-          <p>Register Now</p>
+        <button onClick={handleConnectWallet}>
+          <p>GET LOAN</p>
         </button>
       </div>
     </div>

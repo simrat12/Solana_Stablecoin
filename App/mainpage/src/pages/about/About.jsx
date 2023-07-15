@@ -28,28 +28,20 @@ const About = () => {
         </Heading>
         <Box my="2rem">
           <Heading as="h6" fontSize="24px" fontWeight="600" my="1rem">
-            Swiftrise Investment Platform: The Best Way to Invest in 2023
+            Solstable Empowering Financial Freedom through Decentralized Lending
           </Heading>
           <Text as="p">
-            Are you looking for a way to invest your money and grow your wealth?
-            If so, you&apos;ve come to the right place. Swiftrise investment
-            platform is the best way to invest in 2023. With Swiftrise, you can
-            access a wide variety of investment opportunities, including stocks,
-            bonds, and cryptocurrencies. You can also take advantage of
-            Swiftrise&apos;s innovative features, such as its portfolio
-            management tools and risk management tools.
+          At Solstable, our mission is to revolutionize lending by providing secure and transparent financial services on the Solana blockchain. We believe in empowering individuals worldwide with accessible lending opportunities, fostering financial inclusivity, and promoting the benefits of decentralized finance.
           </Text>
         </Box>
 
         <Box bgColor="brand.200" p="1.5rem" my="4rem" borderRadius="10px">
           <Heading as="h4" fontSize="28px" textAlign="center" my="1rem">
-            More about our services
+          Decentralized Lending Made Easy: Introducing  Solstable
           </Heading>
 
           <Text as="p" fontSize="15px" mt="2rem" fontWeight="600">
-            Swiftrise is a leading investment platform that offers a wide range
-            of features and benefits. Some of the key features of Swiftrise
-            include:
+          Our team comprises blockchain experts, finance professionals, and software developers with a deep understanding of the industry. With a proven track record of innovation and expertise in blockchain technology, we are dedicated to delivering a cutting-edge lending platform that meets the evolving needs of our users.
           </Text>
 
           <Grid
@@ -91,15 +83,13 @@ const About = () => {
           </Box>
           <Box width={{ base: '100%', md: "60%" }}>
             <Heading as="h4" my="1rem">
-              Looking for a way to earn more?
+            Unlocking Financial Opportunities with Solstable
             </Heading>
             <Text as="p" mb="2rem">
-              If you&apos;re looking for a safe, secure, and easy-to-use
-              investment platform, Swiftrise is the best option for you. Sign up
-              today and start investing!
+            We value our community and actively engage with our users. Through community-driven governance, user feedback, and collaborative initiatives, we foster an inclusive environment that encourages participation and growth. We are continuously evolving our lending application based on user needs and welcome input to shape the future of decentralized lending.
             </Text>
 
-            <NavLink to="/sign-up">
+            <NavLink>
               <Button
                 bgColor="primary.100"
                 borderRadius="10px"
@@ -109,7 +99,7 @@ const About = () => {
                   opacity: '0.8',
                 }}
               >
-                Sign up
+                GET LOAN
               </Button>
             </NavLink>
           </Box>

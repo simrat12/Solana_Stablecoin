@@ -6,7 +6,6 @@ import Pool from "./dashboard/Pool";
 import Trove from "./dashboard/Trove";
 import Bonds from "./dashboard/Bonds";
 
-
 const Main = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
@@ -42,10 +41,17 @@ const Main = () => {
         <div className="dashit">
           <div className="row">
             <div className="col-lg-12">
-              <Trove handleSubmit={handleSubmit} /> 
-              <Bonds handleSubmit={handleSubmit} /> 
-              <Stack handleSubmit={handleSubmit} /> 
-              <Pool handleSubmit={handleSubmit} /> 
+              <Trove handleSubmit={handleSubmit} />
+              <Bonds handleSubmit={handleSubmit} />
+              <Stack handleSubmit={handleSubmit} />
+              <Pool handleSubmit={handleSubmit} />
+
+              <div className="col-md">
+                <div className="aside-card">
+                  <h3>Statistics</h3>
+                  {/* Add content for the aside card here */}
+                </div>
+              </div>
             </div>
           </div>
         </div>

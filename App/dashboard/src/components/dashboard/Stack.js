@@ -20,7 +20,7 @@ const Stack = () => {
 
   if (showForm) {
     return (
-      <div id="dash" className="col-md-9">
+      <div id="dash" className="col-md-8">
         <h2>Stability Pool</h2>
 
         <div className="maincard">
@@ -81,7 +81,7 @@ const Stack = () => {
   }
 
   return (
-    <div id="dash" className="col-md-9">
+    <div id="dash" className="col-md-8">
       <div id="content">
         <h2>Staking</h2>
         <p>

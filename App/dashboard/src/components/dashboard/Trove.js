@@ -22,7 +22,7 @@ const Trove = () => {
 
   if (showForm) {
     return (
-      <div id="dash" className="col-md-9">
+      <div id="dash" className="col-md-8">
         <h2>Trove</h2>
 
         <div className="maincard">
@@ -97,7 +97,7 @@ const Trove = () => {
   }
 
   return (
-    <div id="dash" className="col-md-9">
+    <div id="dash" className="col-md-8">
       <div id="content">
         <h2>Trove</h2>
         <p>

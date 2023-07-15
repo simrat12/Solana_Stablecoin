@@ -20,7 +20,7 @@ const Bonds = () => {
 
   if (showForm) {
     return (
-      <div id="dash" className="col-md-9">
+      <div id="dash" className="col-md-8">
         <h2>Pending Bonds</h2>
 
         <div className="maincard">
@@ -81,7 +81,7 @@ const Bonds = () => {
   }
 
   return (
-    <div id="dash" className="col-md-9">
+    <div id="dash" className="col-md-8">
       <div id="content">
         <h2>Pending Bonds</h2>
         <p>

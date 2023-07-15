@@ -5,21 +5,41 @@
 /* .contact {
     background-color: whitesmoke;
 } */
+
+.col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+    padding: 0 20px;
+}
+
+.aside-card {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 400px;
+    margin-left: 69%;
+    margin-top: 2%;
+    padding-bottom: 50px;
+}
+
+
 .dashit {
     margin-top: 150px;
     margin: 10px;
     margin-left: 20px;
 
 }
+
 #dash {
     margin-top: 500px;
     background-color: #fff6e4;
     margin: 10px;
     border-radius: 10px;
     padding: 10px;
-    
+
 
 }
+
 .contact .info-box {
     color: #444444;
     text-align: center;
@@ -83,6 +103,7 @@
     border-radius: 10px;
     padding: 20px;
 }
+
 #messagebut {
     color: white;
     height: 80px;

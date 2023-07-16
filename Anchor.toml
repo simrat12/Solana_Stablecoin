@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-sol_anchor_contract = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+sol_anchor_contract = "3zCusmfVZJoRWFj1yaTVFNrf3G5zej5kjRTPUpLn3gyd"
 
 [registry]
 url = "https://anchor.projectserum.com"

@@ -4,7 +4,7 @@ pub mod state;
 use state::{PriceFeed, ErrorCode};
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("GFPM2LncpbWiLkePLs3QjcLVPw31B2h23FwFfhig79fh");
+declare_id!("3zCusmfVZJoRWFj1yaTVFNrf3G5zej5kjRTPUpLn3gyd");
 
 #[program]
 pub mod sol_anchor_contract {
@@ -12,7 +12,6 @@ pub mod sol_anchor_contract {
     pub fn init(ctx: Context<Init>, admin_pubkey: Pubkey) -> ProgramResult {
         let admin = &mut ctx.accounts.admin;
         admin.admin_pubkey = admin_pubkey;
-        let bump = ctx.accounts.borrower.bump;
         Ok(())
     }
 
@@ -132,10 +131,8 @@ pub mod sol_anchor_contract {
 pub struct Init<'info> {
     /// CHECK: The `admin` account needs to be initialized, and its address needs
     /// to be derived from the `borrower` constant and the user's public key.
-    #[account(init, seeds=[b"borrower".as_ref(), user.key.as_ref()], bump, payer=user, space=8+8+32+8+1)]
+    #[account(init, payer = user, space = 8 + 24 + 32)]
     pub admin: Account<'info, Admin>,
-    /// CHECK: The `borrower` account needs to be mutable and its address needs
-    pub borrower: Account<'info, Borrower>,
     #[account(mut)]
     pub user: Signer<'info>,
     /// CHECK: The `system_program` is not constrained since we assume it is the System program which does not require any specific checks.

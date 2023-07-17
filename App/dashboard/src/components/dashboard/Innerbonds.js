@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Bonds = () => {
+const Innerbonds = () => {
   const [showForm, setShowForm] = useState(false);
   const [field1, setField1] = useState("");
 
@@ -21,7 +21,7 @@ const Bonds = () => {
   if (showForm) {
     return (
       <div id="dash" className="col-md-8">
-        <h2>Pending Bonds</h2>
+        <h2>LUSD Bonds</h2>
 
         <div className="maincard">
           <div className="stake">
@@ -34,7 +34,7 @@ const Bonds = () => {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="0.00 LQTY"
+                  placeholder="0.00 LUSD"
                   value={field1}
                   onChange={(e) => setField1(e.target.value)}
                   required
@@ -43,19 +43,24 @@ const Bonds = () => {
             </div>
           </div>
 
-          <div className="css-jwa8lq">
-            <label className="css-1owdu0o">
-              <div className="css-zkfaav">Pool share</div>
-            </label>
-            <div id="stake-share" className="css-t8geth">
-              <div className="css-zkfaav">
-                <span className="css-8mokm4">0.000000</span>&nbsp;
-                <span className="css-x2c3dj">%</span>
-              </div>
-            </div>
+          <div>
+            <p>
+              <b>Rebond time return : </b>N/A LUSD
+            </p>
+            <p>
+              <b>Rebond time ROI: </b>N/A
+            </p>
+            <p>
+              <b>Max APR : </b>N/A
+            </p>
           </div>
 
-          <p>Enter the amount of LUSD you'd like to deposit.</p>
+          <p>
+            <b>The minimum bond amount is 100 LUSD.</b>
+          </p>
+          <p>
+            You can cancel your bond at any time to recover your deposited LUSD
+          </p>
           <div className="col-md-12 text-center">
             <button
               id="cancelbut"
@@ -83,12 +88,13 @@ const Bonds = () => {
   return (
     <div id="dash" className="col-md-8">
       <div id="content">
-        <h2>Pending Bonds</h2>
+        <h2>LUSD Bonds</h2>
         <p>
           <b>You don't have any pending bonds.</b>
         </p>
         <p>
-        You can bond LUSD to obtain Boosted LUSD (bLUSD), a yield-amplified version of LUSD.
+          You can bond LUSD to obtain Boosted LUSD (bLUSD), a yield-amplified
+          version of LUSD.
         </p>
 
         <div className="col-md-12 text-center">
@@ -98,7 +104,7 @@ const Bonds = () => {
             type="button" // Change to "button" instead of "submit"
             className="button button-a button-big button-rounded"
           >
-            Go To Bonds
+            Create Bond
           </button>
         </div>
       </div>
@@ -106,4 +112,4 @@ const Bonds = () => {
   );
 };
 
-export default Bonds;
+export default Innerbonds;

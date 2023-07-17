@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Main from "./components/Main";
-import Statistics from "./components/Statistics";
+import Mainbonds from "./components/Mainbonds";
+import Riskytroves from "./components/Riskytroves";
 import Nowallet from "./components/Nowallet";
 
 import "./assets/css/font-awesome.min.css";
@@ -73,7 +74,8 @@ const App = () => {
         {isWalletConnected ? (
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/mainbonds" element={<Mainbonds />} />
+            <Route path="/riskytroves" element={<Riskytroves />} />
             {/* Add more routes for other pages if needed */}
           </Routes>
         ) : (

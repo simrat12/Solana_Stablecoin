@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import web3 from "../web3"; // Import the web3 instance
 import "./dashboard/dashboard.css";
-import Stack from "./dashboard/Stack";
-import Pool from "./dashboard/Pool";
-import Trove from "./dashboard/Trove";
-import Pagebonds from "./dashboard/Pagebonds";
+import Innerbonds from "./dashboard/Innerbonds";
 import Statistics from "./dashboard/Statistics";
 
-const Main = () => {
+const Mainbonds = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   useEffect(() => {
@@ -41,15 +38,37 @@ const Main = () => {
       {isWalletConnected ? (
         <div className="dashit">
           <div className="row">
+            <span>
+            <button
+              onClick={handleSubmit}
+              id="bondsbut"
+              type="submit" // Change to "button" instead of "submit"
+              className="button button-a button-big button-rounded"
+            >
+              Manage Solstable
+            </button>
+            <button
+              onClick={handleSubmit}
+              id="bondsbut"
+              type="submit" // Change to "button" instead of "submit"
+              className="button button-a button-big button-rounded"
+            >
+              Buy bLUSD
+            </button>
+            <button
+              onClick={handleSubmit}
+              id="bondsbut"
+              type="submit" // Change to "button" instead of "submit"
+              className="button button-a button-big button-rounded"
+            >
+              Sell bLUSD
+            </button>
+            </span>
             <div className="col-lg-12">
-              <Trove handleSubmit={handleSubmit} />
-              <Pagebonds handleSubmit={handleSubmit} />
-              <Stack handleSubmit={handleSubmit} />
-              <Pool handleSubmit={handleSubmit} />
-
+              
+              <Innerbonds handleSubmit={handleSubmit} />
 
               <Statistics />
-
               
             </div>  
           </div>
@@ -61,4 +80,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Mainbonds;

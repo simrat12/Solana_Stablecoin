@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/images/backgrounds/sol-up-logo.png";
 import web3 from "../web3"; // Import the web3 instance
+import './dashboard/dashboard.css';
 
 const Navbar = ({
   isWalletConnected,
@@ -18,45 +22,56 @@ const Navbar = ({
           {/* Logo Starts */}
           <div className="main-logo col-xs-12 col-md-3 col-md-2 col-lg-2 hidden-xs">
             <Link to="/">
-              <img
+              <p id="stable"><img
                 id="logo"
                 className="img-responsive"
                 src={logo}
                 alt="logo"
-              />
+              /><b>STABLE</b></p>
             </Link>
           </div>
           {/* Logo Ends */}
           {/* Wallet Stats Starts */}
           {isWalletConnected && (
             <div className="col-md-7 col-lg-7">
-              <ul className="unstyled bitcoin-stats text-center">
-                <li>
-                  <h6>9,450 USD</h6>
-                  <span>Last trade price</span>
-                </li>
-                <li>
-                  <h6>+5.26%</h6>
-                  <span>24 hour price</span>
-                </li>
-                <li>
-                  <h6>12.820 BTC</h6>
-                  <span>24 hour volume</span>
-                </li>
-                <li>
-                  <h6>2,231,775</h6>
-                  <span>active traders</span>
-                </li>
-                <li>
-                  <div
-                    className="btcwdgt-price"
-                    data-bw-theme="light"
-                    data-bw-cur="usd"
-                  ></div>
-                  <span>Live Bitcoin price</span>
-                </li>
-              </ul>
-            </div>
+            <ul className="unstyled bitcoin-stats text-center">
+              <li>
+                <FontAwesomeIcon icon={faWallet} className="wallet-icon" />
+              </li>
+              <li>
+                <h6>0.00</h6>
+                <span>
+                  <b>
+                    <h5>ETH</h5>
+                  </b>
+                </span>
+              </li>
+              <li>
+                <h6>0.00</h6>
+                <span>
+                  <b>
+                    <h5>LUSD</h5>
+                  </b>
+                </span>
+              </li>
+              <li>
+                <h6>0.00</h6>
+                <span>
+                  <b>
+                    <h5>LQTY</h5>
+                  </b>
+                </span>
+              </li>
+              <li>
+                <h6>0.00</h6>
+                <span>
+                  <b>
+                    <h5>bLUSD</h5>
+                  </b>
+                </span>
+              </li>
+            </ul>
+          </div>
           )}
           {/* Wallet Stats Ends */}
           {/* Wallet Actions Starts */}
@@ -64,18 +79,16 @@ const Navbar = ({
             <ul className="unstyled user">
               {isWalletConnected ? (
                 <>
-                  <li className="wallet-address">
+                <li className="wallet-address">
+                  <FontAwesomeIcon icon={faUser} className="profile-icon" />
                   <span>{truncatedAddress}</span>
-                  </li>
-                  <li className="disconnect-wallet">
-                    <button
-                      className="btn btn-primary"
-                      onClick={disconnectWallet}
-                    >
-                      Disconnect
-                    </button>
-                  </li>
-                </>
+                </li>
+                <li className="disconnect-wallet">
+                  <button className="btn btn-primary" onClick={disconnectWallet}>
+                    Disconnect
+                  </button>
+                </li>
+              </>
               ) : (
                 <>
                   <li className="connect-wallet">
@@ -127,27 +140,27 @@ const Navbar = ({
                   <>
                     <li>
                       <Link to="/" activeClassName="active">
-                        Home
+                      DASHBOARD
                       </Link>
                     </li>
                     <li>
-                      <Link to="/statistics">Statistics</Link>
+                      <Link to="/mainbonds">BONDS</Link>
                     </li>
                     <li>
-                      <Link to="/services">Services</Link>
+                      <Link to="/riskytroves">RISKY TROVES</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/pricing">Pricing</Link>
                     </li>
                     <li>
                       <Link to="/contact">Contact</Link>
-                    </li>
+                    </li> */}
                   </>
                 ) : (
                   <>
                     <li>
                       <Link to="/" activeClassName="active">
-                        Home
+                      DASHBOARD
                       </Link>
                     </li>
                   </>

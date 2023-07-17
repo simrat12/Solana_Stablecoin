@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./dashboard.css";
 
 const Trove = () => {
   const [showForm, setShowForm] = useState(false);
@@ -56,16 +57,25 @@ const Trove = () => {
             </div>
           </div>
 
-          <div className="css-jwa8lq">
-            <label className="css-1owdu0o">
-              <div className="css-zkfaav">Pool share</div>
-            </label>
-            <div id="stake-share" className="css-t8geth">
-              <div className="css-zkfaav">
-                <span className="css-8mokm4">0.000000</span>&nbsp;
-                <span className="css-x2c3dj">%</span>
-              </div>
-            </div>
+          <div>
+            <p>
+              <b>Liquidation Reserve: </b>200 LUSD
+            </p>
+            <p>
+              <b>Borrowing Fee: </b>0.00 LUSD (0.51%)
+            </p>
+            <p>
+              <b>Total debt: </b>200.00 LUSD
+            </p>
+            <p>
+              <b>Liquidation price (Normal mode): </b>N/A
+            </p>
+            <p>
+              <b>Liquidation price (Recovery mode): </b>N/A
+            </p>
+            <p>
+              <b>Collateral ratio: </b>N/A
+            </p>
           </div>
 
           <p>

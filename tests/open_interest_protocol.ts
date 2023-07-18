@@ -1,6 +1,5 @@
 import * as anchor from "@project-serum/anchor";
 const assert = require('chai').assert;
-const { SystemProgram } = anchor.web3;
 
 // Use a local provider.
 const provider = anchor.AnchorProvider.local()
@@ -14,6 +13,7 @@ describe('sol_anchor_contract', () => {
 
     // Define an admin keypair.
     const admin = anchor.web3.Keypair.generate();
+    const user = anchor.web3.Keypair.generate();
 
     // Airdrop lamports to the admin account.
     before(async () => {
@@ -21,46 +21,39 @@ describe('sol_anchor_contract', () => {
             await provider.connection.requestAirdrop(admin.publicKey, 10_000_000_000),
             "confirmed",
         );
+        await provider.connection.confirmTransaction(
+            await provider.connection.requestAirdrop(user.publicKey, 10_000_000_000),
+            "confirmed",
+        );
         console.log("Airdropped 10,000,000,000 lamports to:", admin.publicKey.toBase58());
+        console.log("Airdropped 10,000,000,000 lamports to:", user.publicKey.toBase58());
     });
 
     it('Initializes the Admin Account', async () => {
         try {
-            // Create the new account.
-            const adminAccount = anchor.web3.Keypair.generate();
-
             // Create the transaction instruction.
-            const tx = await solAnchorContract.rpc.init(admin.publicKey, {
+            await solAnchorContract.rpc.init({
                 accounts: {
-                    admin: adminAccount.publicKey,
-                    user: admin.publicKey,
-                    systemProgram: SystemProgram.programId,
+                    admin: admin.publicKey,
+                    user: user.publicKey,
+                    systemProgram: anchor.web3.SystemProgram.programId,
                 },
-                signers: [admin, adminAccount],
-                instructions: [
-                    // The system program creates the account used to initialize the admin account.
-                    SystemProgram.createAccount({
-                        fromPubkey: admin.publicKey,
-                        newAccountPubkey: adminAccount.publicKey,
-                        space: 8 + 24 + 32, // Size of the data for an Admin account.
-                        lamports: await solAnchorContract.provider.connection.getMinimumBalanceForRentExemption(
-                          8 + 24 + 32,
-                        ),
-                        programId: solAnchorContract.programId,
-                    }),
-                ],
+                signers: [admin, user],
             });
 
             // Get the account to verify it's as expected.
-            const adminAccountAfterInit = await solAnchorContract.account.admin.fetch(adminAccount.publicKey);
+            const adminAccountAfterInit = await solAnchorContract.account.admin.fetch(admin.publicKey);
+            console.log('Admin Account:', adminAccountAfterInit.adminPubkey.toBase58());
+            console.log("User Account:", user.publicKey.toBase58());
 
             // Validate that the admin account has been initialized with the correct pubkey.
-            assert.ok(adminAccountAfterInit.adminPubkey.equals(admin.publicKey));
+            assert.ok(adminAccountAfterInit.adminPubkey.toBase58() === user.publicKey.toBase58());
         } catch (error) {
             console.error('Error initializing the Admin Account:', error);
         }
     });
 });
+
 
 
 

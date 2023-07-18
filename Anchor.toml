@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-sol_anchor_contract = "3zCusmfVZJoRWFj1yaTVFNrf3G5zej5kjRTPUpLn3gyd"
+sol_anchor_contract = "4Nnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ"
 
 [registry]
 url = "https://anchor.projectserum.com"
@@ -14,4 +14,4 @@ wallet = "/home/simrat12/.config/solana/id.json"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
 [test]
-startup_wait = 10000
+startup_wait = 20000

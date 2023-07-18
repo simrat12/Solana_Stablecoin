@@ -4,14 +4,14 @@ pub mod state;
 use state::{PriceFeed, ErrorCode};
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("3zCusmfVZJoRWFj1yaTVFNrf3G5zej5kjRTPUpLn3gyd");
+declare_id!("4Nnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ");
 
 #[program]
 pub mod sol_anchor_contract {
     use super::*;
-    pub fn init(ctx: Context<Init>, admin_pubkey: Pubkey) -> ProgramResult {
+    pub fn init(ctx: Context<Init>) -> ProgramResult {
         let admin = &mut ctx.accounts.admin;
-        admin.admin_pubkey = admin_pubkey;
+        admin.admin_pubkey = *ctx.accounts.user.key;
         Ok(())
     }
 

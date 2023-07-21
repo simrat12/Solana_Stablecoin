@@ -185,7 +185,7 @@ hr {
   background-color: #e7e7e7;
   border: 0;
   height: 1px;
-  margin: 40px 0;
+  margin: 10px 0;
 }
 
 .title-head {
@@ -235,7 +235,7 @@ hr {
 
 body, p {
   -webkit-font-smoothing: antialiased !important;
-  color: #999;
+  color: black;
   line-height: 28px;
   font-weight: 400;
   font-size: 16px;
@@ -243,7 +243,7 @@ body, p {
 }
 
 h1, h2, h3, h4 {
-  color: #222;
+  color: #181717;
   font-weight: 600;
 }
 
@@ -796,6 +796,7 @@ ul.user li.sign-in a {
   border-radius: 0;
   border: 0;
   margin-bottom: 0;
+  background-color: #aca9a9;
 }
 
 .navbar-toggle {

@@ -16,7 +16,7 @@ const Navbar = ({
   const truncatedAddress = isWalletConnected ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "";
 
   return (
-    <header className="header fixed-top" style={{ backgroundColor: "#262f30" }}>
+    <header className="header fixed-top" style={{ backgroundColor: "#f8f8f8" }}>
       <div className="container">
         <div className="row">
           {/* Logo Starts */}
@@ -27,7 +27,7 @@ const Navbar = ({
                 className="img-responsive"
                 src={logo}
                 alt="logo"
-              /><b>STABLE</b></p>
+              /><b style={{ backgroundColor: "#fff", color: "#333333" }}>STABLE</b></p>
             </Link>
           </div>
           {/* Logo Ends */}
@@ -39,34 +39,34 @@ const Navbar = ({
                 <FontAwesomeIcon icon={faWallet} className="wallet-icon" />
               </li>
               <li>
-                <h6>0.00</h6>
+                <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5>ETH</h5>
+                    <h5 style={{ color: "#333333" }}>ETH</h5>
                   </b>
                 </span>
               </li>
               <li>
-                <h6>0.00</h6>
+                <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5>LUSD</h5>
+                    <h5 style={{ color: "#333333" }}>LUSD</h5>
                   </b>
                 </span>
               </li>
               <li>
-                <h6>0.00</h6>
+                <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5>LQTY</h5>
+                    <h5 style={{ color: "#333333" }}>LQTY</h5>
                   </b>
                 </span>
               </li>
               <li>
-                <h6>0.00</h6>
+                <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5>bLUSD</h5>
+                    <h5 style={{ color: "#333333" }}>bLUSD</h5>
                   </b>
                 </span>
               </li>
@@ -84,7 +84,7 @@ const Navbar = ({
                   <span>{truncatedAddress}</span>
                 </li>
                 <li className="disconnect-wallet">
-                  <button className="btn btn-primary" onClick={disconnectWallet}>
+                  <button style={{ backgroundColor: "rgb(79, 209, 226)", color: "#333333" }} className="btn btn-primary" onClick={disconnectWallet}>
                     Disconnect
                   </button>
                 </li>
@@ -92,7 +92,7 @@ const Navbar = ({
               ) : (
                 <>
                   <li className="connect-wallet">
-                    <button
+                    <button style={{ backgroundColor: "rgb(79, 209, 226)", color: "#333333" }}
                       className="btn btn-primary"
                       onClick={connectWallet}
                     >

@@ -52,9 +52,9 @@ const App = () => {
         .catch((error) => {
           console.log(error);
         });
-    } else {
-      window.location.href = "https://metamask.io/download.html";
-    }
+      } else {
+        window.open("https://metamask.io/download.html", "_blank");
+      }
   };
 
   const disconnectWallet = () => {

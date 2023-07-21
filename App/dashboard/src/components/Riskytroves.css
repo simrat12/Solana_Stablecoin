@@ -4,11 +4,29 @@
     margin: 10px;
 }
 
+#mainhead {
+  background-color: #528591;
+  color: #fff;
+  border-radius: 10px;
+  width: 100%;
+}
+
+#arrowshift {
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+#leftright {
+  margin-left: 20px;
+  margin-right: 20px;
+
+}
 .row{
     .col-md-4{
       margin-bottom:20px;
     }
   }
+
   .crypto-table {
     border-collapse: separate;
     border-spacing: 0 1em;

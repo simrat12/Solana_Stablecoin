@@ -8,7 +8,7 @@ const Nowallet = ({ connectWallet }) => {
       <p style={styles.paragraph}>
         To access this application, please connect to a Web3 wallet such as Metamask.
       </p>
-      <button className="btn btn-primary" onClick={connectWallet}>
+      <button style={{ backgroundColor: "rgb(79, 209, 226)", color: "#333333" }} className="btn btn-primary" onClick={connectWallet}>
         Connect Wallet
       </button>
     </div>

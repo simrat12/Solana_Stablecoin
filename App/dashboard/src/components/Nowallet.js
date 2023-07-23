@@ -1,9 +1,6 @@
 import React from 'react';
 
-const Nowallet = ({ isWalletConnected }) => {
-  if (isWalletConnected) {
-    return null; // Do not render the component if wallet is connected
-  }
+const Nowallet = ({ connectWallet }) => {
 
   return (
     <div className="nowallet" style={styles.container}>
@@ -11,6 +8,9 @@ const Nowallet = ({ isWalletConnected }) => {
       <p style={styles.paragraph}>
         To access this application, please connect to a Web3 wallet such as Metamask.
       </p>
+      <button style={{ backgroundColor: "rgb(79, 209, 226)", color: "#333333" }} className="btn btn-primary" onClick={connectWallet}>
+        Connect Wallet
+      </button>
     </div>
   );
 };

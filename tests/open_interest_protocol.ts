@@ -1,58 +1,82 @@
 import * as anchor from "@project-serum/anchor";
-const assert = require('chai').assert;
+import { Keypair, Connection, PublicKey, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { strict as assert } from 'assert';
 
-// Use a local provider.
-const provider = anchor.AnchorProvider.local()
-
-// Configure the client to use the local cluster.
+const provider = anchor.AnchorProvider.local();
 anchor.setProvider(provider);
+const walletKeyPair = Keypair.generate();
 
-describe('sol_anchor_contract', () => {
-    // Define the program for the test.
-    const solAnchorContract = anchor.workspace.SolAnchorContract;
+describe("sol_anchor_contract", () => {
+  const program = anchor.workspace.SolAnchorContract;
+  let userAccount = Keypair.generate();
+  let depositAmount = new anchor.BN(LAMPORTS_PER_SOL);  // 1 SOL
 
-    // Define an admin keypair.
-    const admin = anchor.web3.Keypair.generate();
-    const user = anchor.web3.Keypair.generate();
+  before(async () => {
+    await provider.connection.confirmTransaction(
+        await provider.connection.requestAirdrop(userAccount.publicKey, 1000 * LAMPORTS_PER_SOL),
+        "confirmed",
+    );
+    console.log("Airdropped 1000 SOL to:", userAccount.publicKey.toBase58());
+  });
 
-    // Airdrop lamports to the admin account.
-    before(async () => {
-        await provider.connection.confirmTransaction(
-            await provider.connection.requestAirdrop(admin.publicKey, 10_000_000_000),
-            "confirmed",
-        );
-        await provider.connection.confirmTransaction(
-            await provider.connection.requestAirdrop(user.publicKey, 10_000_000_000),
-            "confirmed",
-        );
-        console.log("Airdropped 10,000,000,000 lamports to:", admin.publicKey.toBase58());
-        console.log("Airdropped 10,000,000,000 lamports to:", user.publicKey.toBase58());
+  it("Creates accounts", async () => {
+    const [pdaAccount, pdaNonce] = await PublicKey.findProgramAddress(
+      [Buffer.from("pda_account"), userAccount.publicKey.toBuffer()],
+      program.programId,
+    );
+
+    const [userDepositAccount, userDepositNonce] = await PublicKey.findProgramAddress(
+      [Buffer.from("user_deposit_account"), userAccount.publicKey.toBuffer()],
+      program.programId,
+    );
+
+    console.log("pdaAccount: ", pdaAccount.toBase58());
+    console.log("userDepositAccount: ", userDepositAccount.toBase58());
+
+    await program.rpc.createAccounts({
+        accounts: {
+          userAccount: userAccount.publicKey,
+          pdaAccount: pdaAccount,
+          userDepositAccount: userDepositAccount,
+          systemProgram: SystemProgram.programId,
+        },
+        signers: [userAccount],
+    });
+  });
+
+  it("Deposits", async () => {
+    const [pdaAccount, pdaNonce] = await PublicKey.findProgramAddress(
+      [Buffer.from("pda_account"), userAccount.publicKey.toBuffer()],
+      program.programId,
+    );
+
+    const [userDepositAccount, userDepositNonce] = await PublicKey.findProgramAddress(
+      [Buffer.from("user_deposit_account"), userAccount.publicKey.toBuffer()],
+      program.programId,
+    );
+
+    await program.rpc.deposit(depositAmount, {
+      accounts: {
+        userAccount: userAccount.publicKey,
+        pdaAccount: pdaAccount,
+        userDepositAccount: userDepositAccount,
+        systemProgram: SystemProgram.programId,
+      },
+      signers: [userAccount],
     });
 
-    it('Initializes the Admin Account', async () => {
-        try {
-            // Create the transaction instruction.
-            await solAnchorContract.rpc.init({
-                accounts: {
-                    admin: admin.publicKey,
-                    user: user.publicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                },
-                signers: [admin, user],
-            });
-
-            // Get the account to verify it's as expected.
-            const adminAccountAfterInit = await solAnchorContract.account.admin.fetch(admin.publicKey);
-            console.log('Admin Account:', adminAccountAfterInit.adminPubkey.toBase58());
-            console.log("User Account:", user.publicKey.toBase58());
-
-            // Validate that the admin account has been initialized with the correct pubkey.
-            assert.ok(adminAccountAfterInit.adminPubkey.toBase58() === user.publicKey.toBase58());
-        } catch (error) {
-            console.error('Error initializing the Admin Account:', error);
-        }
-    });
+    const userDepositAccountAfter = await program.account.userDepositAccount.fetch(userDepositAccount);
+    console.log("userDepositAccountAfter", userDepositAccountAfter);
+    assert.ok(userDepositAccountAfter.depositedAmount.eq(depositAmount));
+  });
 });
+
+
+
+
+
+  
+
 
 
 

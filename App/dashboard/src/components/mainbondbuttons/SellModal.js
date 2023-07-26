@@ -1,33 +1,137 @@
-import React from "react";
-import "../mainbonds.css";
+import React, { useState } from "react";
 
 const SellModal = ({ onClose, onSubmit }) => {
+  const [field1, setField1] = useState("");
+  const [field2, setField2] = useState("");
+
+  const handleSellSubmit = (e) => {
+    e.preventDefault();
+    // Add your form submission logic here
+    // For example, you can get the form data and handle the Sell process
+    // const formData = new FormData(e.target);
+    // const amount = formData.get("amount");
+    // const address = formData.get("address");
+    // Perform the Sell operation with 'amount' and 'address' data
+    // Close the modal
+    onClose();
+  };
+
   return (
-    <div className="modal">
-      <div className="modal-content">
+    <div className="modal" style={modalStyle}>
+      <div className="modal-content" style={modalContentStyle}>
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <h2>Buy bLUSD</h2>
-        <form onSubmit={onSubmit}>
-          <label>
-            Amount:
-            <input type="number" name="amount" />
-          </label>
+        <h2 style={header}>SELL bLUSD</h2>
+        <div className="maincard">
+          <div className="stake">
+            <div className="col-md-12 mb-3">
+              <div className="form-group">
+                <label className="css-1owdu0o">
+                  <div className="css-zkfaav">Sell</div>
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="0.00 BLUSD"
+                  value={field1}
+                  onChange={(e) => setField1(e.target.value)}
+                  required
+                />
+
+                <label className="css-1owdu0o">
+                  <div className="css-zkfaav">Buy</div>
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="0.00 LUSD"
+                  value={field2}
+                  onChange={(e) => setField2(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p>
+              <b>Exchange Rate: </b>1.1617 bLUSD:LUSD
+            </p>
+            <p>
+              <b>Price Impact: </b>0.0000%
+            </p>
+          </div>
+
+          <p>Your swap is performed directly in Curve protocol.</p>
+
           <br />
-          <label>
-            Address:
-            <input type="text" name="address" />
-          </label>
-          <br />
-          <button type="button" onClick={onClose}>
-            Cancel
+          <button
+            style={cancelbut}
+            type="button"
+            onClick={onClose}
+            className="button-style"
+          >
+            Back
           </button>
-          <button type="submit">Submit</button>
-        </form>
+          <button style={submitbut} type="submit" className="button-style">
+            Approve
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default SellModal;
+
+// Inline CSS styles for the modal
+const header = {
+  textAlign: "center",
+};
+const modalStyle = {
+  display: "block",
+  position: "fixed",
+  zIndex: "9999",
+  top: "0",
+  left: "0",
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.4)",
+};
+
+const modalContentStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "40%",
+  backgroundColor: "rgb(234, 241, 241)",
+  borderRadius: "8px",
+  padding: "20px",
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+};
+
+const cancelbut = {
+  /* Your button style here */
+  padding: "8px 12px",
+  backgroundColor: "rgb(129, 128, 125)",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  margin: "10px",
+  marginRight: "8px",
+};
+
+const submitbut = {
+  /* Your button style here */
+  padding: "8px 12px",
+  backgroundColor: "rgb(79, 209, 226)",
+  color: "black",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  margin: "10px",
+  marginRight: "8px",
+};

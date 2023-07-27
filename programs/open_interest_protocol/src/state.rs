@@ -8,7 +8,6 @@ use std::str::FromStr;
 #[derive(InitSpace)]
 pub struct AdminConfig {
     pub loan_price_feed_id: Pubkey,
-    pub collateral_price_feed_id: Pubkey,
 }
 
 #[derive(Clone)]

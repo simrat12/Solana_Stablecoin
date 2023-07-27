@@ -5,8 +5,10 @@ const {
     USER_DEPOSIT_ACCOUNT_SEED, 
     userAccount, 
     anchor, 
+    solToUSD,
     solanaWeb3 
 } = require('./common');
+
 
 async function createAccounts() {
     const [pdaAccount, pdaNonce] = await anchor.web3.PublicKey.findProgramAddress(
@@ -19,15 +21,19 @@ async function createAccounts() {
         program.programId
     );
 
+    const adminConfig = anchor.web3.Keypair.generate();
+    console.log(userAccount.publicKey);
+
     console.log("Creating accounts...");
-    await program.rpc.createAccounts({
+    await program.rpc.createAccounts(new anchor.web3.PublicKey(solToUSD), {
         accounts: {
             userAccount: userAccount.publicKey,
             pdaAccount: pdaAccount,
             userDepositAccount: userDepositAccount,
             systemProgram: solanaWeb3.SystemProgram.programId,
+            config: adminConfig.publicKey,
         },
-        signers: [userAccount],
+        signers: [userAccount, adminConfig],
     });
     console.log("Accounts created.");
 }
@@ -35,3 +41,4 @@ async function createAccounts() {
 createAccounts().catch((err) => {
     console.error(err);
 });
+

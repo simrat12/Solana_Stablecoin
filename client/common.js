@@ -9,9 +9,10 @@ anchor.setProvider(provider);
 
 // Replace with your program's ID
 const program = anchor.workspace.SolAnchorContract;
+console.log(program);
 
-// Define the Pyth Oracle Account. Replace with the address of the pyth oracle account.
-const oracleAddress = "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG";
+// Path to SOL/USD price feed oracle: https://pyth.network/price-feeds/crypto-sol-usd?cluster=devnet 
+const solToUSD = "5U3bH5b6XtG99aVWLqwVzYPVpQiFHytBD68Rz2eFPZd7";
 
 // Define the PDA seeds. Replace with your PDA seeds.
 const PDA_SEED = "pda_account";
@@ -22,7 +23,7 @@ const userAccount = provider.wallet.payer;
 module.exports = {
     provider,
     program,
-    oracleAddress,
+    solToUSD,
     PDA_SEED,
     USER_DEPOSIT_ACCOUNT_SEED,
     userAccount,

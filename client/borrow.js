@@ -13,6 +13,8 @@ const {
 const { createMint, createAssociatedTokenAccount } = require('@solana/spl-token');
 // Call functions similar to how you have done in createAccounts.js
 
+const solToUSD = "5U3bH5b6XtG99aVWLqwVzYPVpQiFHytBD68Rz2eFPZd7";
+
 async function borrow() {
     const [pdaAccount, pdaNonce] = await anchor.web3.PublicKey.findProgramAddress(
         [Buffer.from(PDA_SEED), provider.wallet.publicKey.toBuffer()],
@@ -53,11 +55,11 @@ async function borrow() {
     );
 
     console.log("Borrowing...");
-    await program.rpc.borrow(new anchor.BN(50), {
+    await program.rpc.borrow(new anchor.BN(5), {
         accounts: {
             userDepositAccount: userDepositAccount,
             userBorrowTracker: userAccount.publicKey,
-            pythLoanAccount: new anchor.web3.PublicKey(oracleAddress),
+            pythLoanAccount: new anchor.web3.PublicKey(solToUSD),
             borrowerDebtTokenAccount: borrowerDebtTokenAccount,
             debtTokenMint: mint,
             tokenProgram: splToken.TOKEN_PROGRAM_ID,

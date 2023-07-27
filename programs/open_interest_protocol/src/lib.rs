@@ -2,16 +2,17 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 use anchor_spl::token::{self, Transfer, MintTo, Burn, TokenAccount};
 pub mod state;
-use state::{PriceFeed, ErrorCode};
+use state::{PriceFeed, ErrorCode, AdminConfig};
 
-declare_id!("4Nnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ");
+declare_id!("4Bnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ");
 
 #[program]
 pub mod sol_anchor_contract {
     use super::*;
 
-    pub fn create_accounts(ctx: Context<CreateAccounts>) -> ProgramResult {
+    pub fn create_accounts(ctx: Context<CreateAccounts>, config: AdminConfig) -> ProgramResult {
         let pda_account = &mut ctx.accounts.pda_account;
+        ctx.accounts.config.set_inner(config);
         let user_deposit_account = &mut ctx.accounts.user_deposit_account;
 
         user_deposit_account.user = *ctx.accounts.user_account.key;
@@ -103,6 +104,12 @@ pub struct CreateAccounts<'info> {
     pub user_deposit_account: Account<'info, UserDepositAccount>,
     /// CHECK: Safe
     pub system_program: AccountInfo<'info>,
+    #[account(
+        init,
+        payer = user_account,
+        space = 8 + AdminConfig::INIT_SPACE
+    )]
+    pub config: Account<'info, AdminConfig>,
 }
 
 #[derive(Accounts)]
@@ -123,12 +130,17 @@ pub struct Deposit<'info> {
 #[derive(Accounts)]
 pub struct Borrow<'info> {
     /// CHECK: Safe
+    pub config: Account<'info, AdminConfig>,
+    /// CHECK: Safe
     #[account(init, payer = user, seeds = [b"user_deposit_account", user.key.as_ref()], bump, space=200)]
     pub user_deposit_account: Account<'info, UserDepositAccount>,
     /// CHECK: Safe
     #[account(init, payer = user, seeds = [b"user_borrow_tracker", user.key.as_ref()], bump, space=200)]
     pub user_borrow_tracker: Account<'info, UserBorrowTracker>,
     // CHECK: Safe
+    #[account(
+        address = config.loan_price_feed_id @ ErrorCode::InvalidArgument
+    )]
     pub pyth_loan_account: Account<'info, PriceFeed>,
     /// CHECK: Safe
     #[account(mut)]

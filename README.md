@@ -35,3 +35,100 @@ You should have the following installed:
     ```bash
     anchor test
     ```
+
+## Wallet Setup and Deployment
+
+### Creating a Local Wallet
+
+1. Install the Solana Tool Suite, if you haven't already:
+
+    ```
+    sh -c "$(curl -sSfL https://release.solana.com/v1.14.18/install)"
+    ```
+
+2. Create a new local wallet:
+
+    ```
+    solana-keygen new -o ~/solana-wallet.json
+    ```
+
+    This will create a new keypair and store it in `solana-wallet.json` in your home directory.
+
+3. Set the `SOLANA_WALLET` environment variable to point to your keypair file:
+
+    ```
+    echo "export SOLANA_WALLET=~/solana-wallet.json" >> ~/.bash_profile, then add the path in .env
+    ```
+
+    This adds the export line to your `.bash_profile` file, which is run whenever you open a new terminal window. You'll need to close and reopen your terminal after running this.
+
+4. Verify that the `SOLANA_WALLET` environment variable is set correctly:
+
+    ```
+    echo $SOLANA_WALLET
+    ```
+
+    This should print the path to your keypair file.
+
+### Configuring for Devnet
+
+1. Use the following command to configure Solana CLI to use Devnet:
+
+    ```
+    solana config set --url https://api.devnet.solana.com
+    ```
+
+2. Verify the configuration:
+
+    ```
+    solana config get
+    ```
+
+    This should show that your CLI is configured to use Devnet.
+
+5. Get some SOL via aridrop
+
+    ```
+    solana airdrop 3 <your address>
+    ```
+
+### Deploying the Program
+
+1. Build the program:
+
+    ```
+    anchor build
+    ```
+
+2. Deploy the program to Devnet:
+
+    ```
+    anchor deploy --verifiable
+    ```
+
+    This will deploy your program to Devnet and print the program's address. Make sure to keep a record of this address.
+
+### Running the Client
+
+1. Navigate to the client directory:
+
+    ```
+    cd client
+    ```
+
+2. Install the client dependencies:
+
+    ```
+    npm install
+    ```
+
+3. Run the `createAccounts` script to create the necessary accounts:
+
+    ```
+    node createAccounts.js
+    ```
+
+4. Run `deposit` script and `borrow` script
+
+
+You can now use Node.js to call each function in the smart contract. Be sure to replace `YourProgramAddress` with the address of your deployed program when calling these functions.

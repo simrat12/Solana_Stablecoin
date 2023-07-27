@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.devnet]
-sol_anchor_contract = "4Nnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ"
+sol_anchor_contract = "4Bnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ"
 
 [registry]
 url = "https://anchor.projectserum.com"

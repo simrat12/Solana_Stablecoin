@@ -24,7 +24,7 @@ const Managesol = ({ onClose, activeTab }) => {
           &times;
         </span>
         <div style={headerStyle}>
-          <h2>Manage liquidity</h2>
+          <h2>Manage Solstable</h2>
           <div style={navigationStyle}>
             <button
               style={

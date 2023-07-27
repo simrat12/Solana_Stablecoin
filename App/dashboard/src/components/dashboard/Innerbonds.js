@@ -21,7 +21,7 @@ const Innerbonds = () => {
   if (showForm) {
     return (
       <div id="dash" className="col-md-8">
-        <h2>LUSD Bonds</h2>
+        <h2>SUSD Bonds</h2>
 
         <div className="maincard">
           <div className="stake">
@@ -34,7 +34,7 @@ const Innerbonds = () => {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="0.00 LUSD"
+                  placeholder="0.00 SUSD"
                   value={field1}
                   onChange={(e) => setField1(e.target.value)}
                   required
@@ -45,7 +45,7 @@ const Innerbonds = () => {
 
           <div>
             <p>
-              <b>Rebond time return : </b>N/A LUSD
+              <b>Rebond time return : </b>N/A SUSD
             </p>
             <p>
               <b>Rebond time ROI: </b>N/A
@@ -56,10 +56,10 @@ const Innerbonds = () => {
           </div>
 
           <p>
-            <b>The minimum bond amount is 100 LUSD.</b>
+            <b>The minimum bond amount is 100 SUSD.</b>
           </p>
           <p>
-            You can cancel your bond at any time to recover your deposited LUSD
+            You can cancel your bond at any time to recover your deposited SUSD
           </p>
           <div className="col-md-12 text-center">
             <button
@@ -88,13 +88,13 @@ const Innerbonds = () => {
   return (
     <div id="dash" className="col-md-8">
       <div id="content">
-        <h2>LUSD Bonds</h2>
+        <h2>SUSD Bonds</h2>
         <p>
           <b>You don't have any pending bonds.</b>
         </p>
         <p>
-          You can bond LUSD to obtain Boosted LUSD (bLUSD), a yield-amplified
-          version of LUSD.
+          You can bond SUSD to obtain Boosted SUSD (bSUSD), a yield-amplified
+          version of SUSD.
         </p>
 
         <div className="col-md-12 text-center">

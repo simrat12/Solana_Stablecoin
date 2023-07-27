@@ -48,7 +48,7 @@ const Trove = () => {
                 <input
                   type="number"
                   className="form-control"
-                  placeholder="0.00 LUSD"
+                  placeholder="0.00 SUSD"
                   value={field2}
                   onChange={(e) => setField2(e.target.value)}
                   required
@@ -59,19 +59,19 @@ const Trove = () => {
 
           <div>
             <p>
-              <b>Liquidation Reserve: </b>200 LUSD
+              <b>Solstable Reserve: </b>200 SUSD
             </p>
             <p>
-              <b>Borrowing Fee: </b>0.00 LUSD (0.51%)
+              <b>Borrowing Fee: </b>0.00 SUSD (0.51%)
             </p>
             <p>
-              <b>Total debt: </b>200.00 LUSD
+              <b>Total debt: </b>200.00 SUSD
             </p>
             <p>
-              <b>Liquidation price (Normal mode): </b>N/A
+              <b>Solstable price (Normal mode): </b>N/A
             </p>
             <p>
-              <b>Liquidation price (Recovery mode): </b>N/A
+              <b>Solstable price (Recovery mode): </b>N/A
             </p>
             <p>
               <b>Collateral ratio: </b>N/A
@@ -111,9 +111,9 @@ const Trove = () => {
       <div id="content">
         <h2>Trove</h2>
         <p>
-          <b>You haven't borrowed any LUSD yet.</b>
+          <b>You haven't borrowed any SUSD yet.</b>
         </p>
-        <p>You can borrow LUSD against ETH collateral by opening a Trove.</p>
+        <p>You can borrow SUSD against ETH collateral by opening a Trove.</p>
 
         <div className="col-md-12 text-center">
           <button

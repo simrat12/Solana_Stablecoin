@@ -34,7 +34,7 @@ const Stack = () => {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="0.00 LQTY"
+                  placeholder="0.00 SOLT"
                   value={field1}
                   onChange={(e) => setField1(e.target.value)}
                   required
@@ -55,7 +55,7 @@ const Stack = () => {
             </div>
           </div>
 
-          <p>Enter the amount of LUSD you'd like to Stake.</p>
+          <p>Enter the amount of SUSD you'd like to Stake.</p>
           <div className="col-md-12 text-center">
             <button
               id="cancelbut"
@@ -85,10 +85,10 @@ const Stack = () => {
       <div id="content">
         <h2>Staking</h2>
         <p>
-          <b>You haven't staked LQTY yet.</b>
+          <b>You haven't staked SOLT yet.</b>
         </p>
         <p>
-        Enter the amount of LQTY you'd like to stake
+        Enter the amount of SOLT you'd like to stake
         </p>
 
         <div className="col-md-12 text-center">

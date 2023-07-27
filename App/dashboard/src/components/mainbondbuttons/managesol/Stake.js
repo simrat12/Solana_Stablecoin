@@ -27,12 +27,12 @@ const Stake = ({ handleSubmit, onClose }) => {
 
       <div>
         <p>
-          <b>bLUSD LP APR : </b>0.00%
+          <b>bSUSD LP APR : </b>0.00%
         </p>
       </div>
 
       <p>
-        Your LP tokens will be staked in the bLUSD Curve gauge to earn protocol
+        Your LP tokens will be staked in the bSUSD Curve gauge to earn protocol
         fees and Curve rewards.
       </p>
 

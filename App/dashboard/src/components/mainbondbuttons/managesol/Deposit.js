@@ -11,24 +11,24 @@ const Deposit = ({ handleSubmit, onClose }) => {
           <form>
             <div className="form-group">
               <label className="css-1owdu0o">
-                <div className="css-zkfaav">bLUSD Amount</div>
+                <div className="css-zkfaav">bSUSD Amount</div>
               </label>
               <input
                 type="number"
                 className="form-control"
-                placeholder="0.00 bLUSD"
+                placeholder="0.00 bSUSD"
                 value={field1}
                 onChange={(e) => setField1(e.target.value)}
                 required
               />
 
               <label className="css-1owdu0o">
-                <div className="css-zkfaav">LUSD amount</div>
+                <div className="css-zkfaav">SUSD Amount</div>
               </label>
               <input
                 type="number"
                 className="form-control"
-                placeholder="0.00 LUSD"
+                placeholder="0.00 SUSD"
                 value={field2}
                 onChange={(e) => setField2(e.target.value)}
                 required
@@ -40,20 +40,39 @@ const Deposit = ({ handleSubmit, onClose }) => {
 
       <div>
         <p>
-          <b>Mint LP tokens: </b>0.00
+          <b>Mint SOLT tokens: </b>0.00
         </p>
       </div>
 
       <div>
-        <input type="checkbox" id="red" name="deposit" value="red" />
+        <input type="checkbox" id="red" name="deposit" value="red" checked />
         <label for="red">Deposit tokens in a balanced ratio</label>
       </div>
       <div>
-        <input type="checkbox" id="blue" name="stake" value="blue" />
-        <label for="blue">Stake LP tokens in Curve gauge</label>
+        <input type="checkbox" id="blue" name="stake" value="blue" checked />
+        <label for="blue">Stake SOLT tokens in Curve gauge</label>
       </div>
 
-      <details>Pool details</details>
+      <details>
+        <summary id="pooldetails">POOL DETAILS</summary>
+        <div>
+          <p>
+            <b>Pool Balance: </b>1,589,847.51 bSUSD + 1,528,904.65 SUSD-3CRV
+          </p>
+          <p>
+            <b>Pool Balance Ratio: </b>1 bSUSD : 0.96 SUSD-3CRV
+          </p>
+          <p>
+            <b>LP Token Supply: </b>1,556,971.29
+          </p>
+          <p>
+            <b>bSUSD Price: </b>1.16 SUSD
+          </p>
+          <p>
+            <b>bSUSD LP APR: </b>0.01%
+          </p>
+        </div>
+      </details>
 
       <br />
       <button

@@ -28,15 +28,15 @@ const Unstake = ({ handleSubmit, onClose }) => {
       <div>
         <h5>Rewards</h5>
         <p>
-          <b>LUSD: </b>0.00
+          <b>SUSD: </b>0.00
         </p>
         <p>
-          <b>bLUSD LP APR: </b>0.01%
+          <b>bSUSD LP APR: </b>0.01%
         </p>
       </div>
 
       <p>
-        Your staked LP tokens will be unstaked from the bLUSD Curve gauge and
+        Your staked LP tokens will be unstaked from the bSUSD Curve gauge and
         moved into your wallet. Pending rewards will also be claimed and moved
         into your wallet.
       </p>

@@ -161,14 +161,14 @@ const Hero = () => {
         <div className="stagger one">
           <p className="title">Seamless Integration</p>
           <p>
-          Seamlessly integrate your Solana lending application with popular decentralized finance (DeFi) protocols and liquidity pools to enhance liquidity and provide users with a wider range of lending options.
+          Seamlessly integrate your Solana lending application with popular decentralized finance (DeFi) protocols and Solstable pools to enhance Solstable and provide users with a wider range of lending options.
           </p>
         </div>
 
         <div className="stagger two">
           <p className="title">Automated Collateral Management:</p>
           <p>
-          Implement smart contract functionality that automates collateral management, ensuring efficient loan liquidation processes in the event of default, reducing counterparty risk for lenders.
+          Implement smart contract functionality that automates collateral management, ensuring efficient loan Solstable processes in the event of default, reducing counterparty risk for lenders.
           </p>
         </div>
 

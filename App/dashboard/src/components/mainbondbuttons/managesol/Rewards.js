@@ -8,10 +8,10 @@ const Withdraw = ({ handleSubmit, onClose }) => {
       <div>
         <h3>Rewards</h3>
         <p>
-          <b>LUSD: </b>0.00
+          <b>SUSD: </b>0.00
         </p>
         <p>
-          <b>bLUSD LP APR: </b>0.01%
+          <b>bSUSD LP APR: </b>0.01%
         </p>
       </div>
 

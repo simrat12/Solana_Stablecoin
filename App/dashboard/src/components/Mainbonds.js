@@ -89,9 +89,9 @@ const Mainbonds = () => {
                 Manage Solstable
               </button>
               <button id="bondsbut" onClick={handleBuyModalClick}>
-                Buy bLUSD
+                Buy bSUSD
               </button>
-              <button id="bondsbut" onClick={handleSellModalClick}>Sell bLUSD</button>
+              <button id="bondsbut" onClick={handleSellModalClick}>Sell bSUSD</button>
             </span>
             <div className="col-lg-12">
               <Innerbonds />

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 
 const Withdraw = ({ handleSubmit, onClose }) => {
+  const [selectedOption, setSelectedOption] = useState("option3");
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   const [field1, setField1] = useState("");
 
   return (
@@ -25,13 +31,84 @@ const Withdraw = ({ handleSubmit, onClose }) => {
         </div>
       </div>
 
-      <div>
-        <p>
-          <b>WITHDRAW: </b>0.00 bLUSD + 0.00 LUSD
-        </p>
+      <div className="radio-form-container">
+        <form className="radio-form">
+          <div className="radio-item">
+            <input
+              type="radio"
+              id="radio1"
+              name="radio-option"
+              value="option1"
+              checked={selectedOption === "option1"}
+              onChange={handleOptionChange}
+            />
+            <label htmlFor="radio1">bSUSD</label>
+          </div>
+          <div className="radio-item">
+            <input
+              type="radio"
+              id="radio2"
+              name="radio-option"
+              value="option2"
+              checked={selectedOption === "option2"}
+              onChange={handleOptionChange}
+            />
+            <label htmlFor="radio2">SUSD</label>
+          </div>
+          <div className="radio-item">
+            <input
+              type="radio"
+              id="radio3"
+              name="radio-option"
+              value="option3"
+              checked={selectedOption === "option3"}
+              onChange={handleOptionChange}
+            />
+            <label htmlFor="radio3">Both</label>
+          </div>
+        </form>
+
+        {/* Paragraphs to be shown based on radio selection */}
+        <div className="paragraph-container">
+          {selectedOption === "option1" && (
+            <p>
+              <b>Withdraw: </b>0.00 bSUSD
+            </p>
+          )}
+          {selectedOption === "option2" && (
+            <p>
+              <b>Withdraw: </b>0.00 SUSD
+            </p>
+          )}
+          {selectedOption === "option3" && (
+            <p>
+              {" "}
+              <b>Withdraw: </b>0.00 bSUSD + 0.00 SUSD(default).
+            </p>
+          )}
+        </div>
       </div>
 
-      <details>Pool Details</details>
+      <details>
+        <summary id="pooldetails">POOL DETAILS</summary>
+        <div>
+          <p>
+            <b>Pool Balance: </b>1,589,847.51 bSUSD + 1,528,904.65 SUSD-3CRV
+          </p>
+          <p>
+            <b>Pool Balance Ratio: </b>1 bSUSD : 0.96 SUSD-3CRV
+          </p>
+          <p>
+            <b>LP Token Supply: </b>1,556,971.29
+          </p>
+          <p>
+            <b>bSUSD Price: </b>1.16 SUSD
+          </p>
+          <p>
+            <b>bSUSD LP APR: </b>0.01%
+          </p>
+        </div>
+      </details>
 
       <br />
       <button

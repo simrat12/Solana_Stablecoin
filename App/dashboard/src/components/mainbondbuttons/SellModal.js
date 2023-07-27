@@ -22,7 +22,7 @@ const SellModal = ({ onClose, onSubmit }) => {
         <span className="close" onClick={onClose}>
           &times;
         </span>
-        <h2 style={header}>SELL bLUSD</h2>
+        <h2 style={header}>SELL bSUSD</h2>
         <div className="maincard">
           <div className="stake">
             <div className="col-md-12 mb-3">
@@ -33,7 +33,7 @@ const SellModal = ({ onClose, onSubmit }) => {
                 <input
                   type="number"
                   className="form-control"
-                  placeholder="0.00 BLUSD"
+                  placeholder="0.00 BSUSD"
                   value={field1}
                   onChange={(e) => setField1(e.target.value)}
                   required
@@ -45,7 +45,7 @@ const SellModal = ({ onClose, onSubmit }) => {
                 <input
                   type="number"
                   className="form-control"
-                  placeholder="0.00 LUSD"
+                  placeholder="0.00 SUSD"
                   value={field2}
                   onChange={(e) => setField2(e.target.value)}
                   required
@@ -56,7 +56,7 @@ const SellModal = ({ onClose, onSubmit }) => {
 
           <div>
             <p>
-              <b>Exchange Rate: </b>1.1617 bLUSD:LUSD
+              <b>Exchange Rate: </b>1.1617 bSUSD:SUSD
             </p>
             <p>
               <b>Price Impact: </b>0.0000%

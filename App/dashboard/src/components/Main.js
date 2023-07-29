@@ -44,8 +44,8 @@ const Main = () => {
             <div className="col-lg-12">
               <Trove handleSubmit={handleSubmit} />
               <Pagebonds handleSubmit={handleSubmit} />
-              <Stack handleSubmit={handleSubmit} />
               <Pool handleSubmit={handleSubmit} />
+              <Stack handleSubmit={handleSubmit} />
 
 
               <Statistics />

@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from "react";
-import web3 from "../web3"; // Import the web3 instance
+import web3 from "../web3";
 import "./dashboard/dashboard.css";
+import "./mainbonds.css";
 import Innerbonds from "./dashboard/Innerbonds";
 import Statistics from "./dashboard/Statistics";
+import Managesol from "./mainbondbuttons/Managesol";
+import SellModal from "./mainbondbuttons/SellModal";
+import BuyModal from "./mainbondbuttons/BuyModal";
 
 const Mainbonds = () => {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [isManageSolModalOpen, setIsManageSolModalOpen] = useState(false);
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
+  const [isSellModalOpen, setIsSellModalOpen] = useState(false);
 
   useEffect(() => {
     const checkWalletConnection = async () => {
       if (web3.currentProvider) {
         try {
-          // Request user permission to connect the wallet
           await web3.currentProvider.request({ method: "eth_requestAccounts" });
-
-          // Check the connection status or Ethereum address availability in the web3 instance
           const accounts = await web3.eth.getAccounts();
           const isConnected = accounts.length > 0;
-
           setIsWalletConnected(isConnected);
         } catch (error) {
           console.error("Failed to connect the wallet:", error);
@@ -28,9 +31,52 @@ const Mainbonds = () => {
     checkWalletConnection();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleManageSolClick = () => {
+    setIsManageSolModalOpen(true);
+  };
+
+  const handleCloseManageSolModal = () => {
+    setIsManageSolModalOpen(false);
+  };
+
+  const handleBuyModalClick = () => {
+    setIsBuyModalOpen(true);
+  };
+  
+  const handleCloseBuyModal = () => {
+    setIsBuyModalOpen(false);
+  };
+  
+  const handleSellModalClick = () => {
+    setIsSellModalOpen(true);
+  };
+  
+  const handleCloseSellModal = () => {
+    setIsSellModalOpen(false);
+  };
+
+  const handleBuySubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    // Add your form submission logic here
+    // For example, you can get the form data and handle the buy process
+    // const formData = new FormData(e.target);
+    // const amount = formData.get("amount");
+    // const address = formData.get("address");
+    // Perform the buy operation with 'amount' and 'address' data
+    // Close the modal
+    handleCloseBuyModal();
+  };
+
+  const handleSellSubmit = (e) => {
+    e.preventDefault();
+    // Add your form submission logic here
+    // For example, you can get the form data and handle the buy process
+    // const formData = new FormData(e.target);
+    // const amount = formData.get("amount");
+    // const address = formData.get("address");
+    // Perform the buy operation with 'amount' and 'address' data
+    // Close the modal
+    handleCloseSellModal();
   };
 
   return (
@@ -39,42 +85,37 @@ const Mainbonds = () => {
         <div className="dashit">
           <div className="row">
             <span>
-            <button
-              onClick={handleSubmit}
-              id="bondsbut"
-              type="submit" // Change to "button" instead of "submit"
-              className="button button-a button-big button-rounded"
-            >
-              Manage Solstable
-            </button>
-            <button
-              onClick={handleSubmit}
-              id="bondsbut"
-              type="submit" // Change to "button" instead of "submit"
-              className="button button-a button-big button-rounded"
-            >
-              Buy bLUSD
-            </button>
-            <button
-              onClick={handleSubmit}
-              id="bondsbut"
-              type="submit" // Change to "button" instead of "submit"
-              className="button button-a button-big button-rounded"
-            >
-              Sell bLUSD
-            </button>
+              <button id="bondsbut" onClick={handleManageSolClick}>
+                Manage Solstable
+              </button>
+              <button id="bondsbut" onClick={handleBuyModalClick}>
+                Buy bSUSD
+              </button>
+              <button id="bondsbut" onClick={handleSellModalClick}>Sell bSUSD</button>
             </span>
             <div className="col-lg-12">
-              
-              <Innerbonds handleSubmit={handleSubmit} />
-
+              <Innerbonds />
               <Statistics />
-              
-            </div>  
+            </div>
           </div>
         </div>
       ) : (
         <h1>Refresh Page</h1>
+      )}
+
+      {/* Render the Managesol modal if isManageSolModalOpen is true */}
+      {isManageSolModalOpen && (
+        <Managesol onClose={handleCloseManageSolModal} activeTab="DEPOSIT" />
+      )}
+
+      {/* Render the BuyModal if isBuyModalOpen is true */}
+      {isBuyModalOpen && (
+        <BuyModal onClose={handleCloseBuyModal} onSubmit={handleBuySubmit} />
+      )}
+
+      {/* Render the SellModal if isSellModalOpen is true */}
+      {isSellModalOpen && (
+        <SellModal onClose={handleCloseSellModal} onSubmit={handleSellSubmit} />
       )}
     </div>
   );

@@ -12,13 +12,16 @@
     padding: 10px;
     display: inline-flex;
     align-items: center;
-  }
-  
-  #logo {
-    width: 50%; /* Adjust the width as needed */
-    height: 30px; /* Adjust the height as needed */
-    margin-right: 1px; /* Add spacing between the image and text */
-  }
+}
+
+#logo {
+    width: 50%;
+    /* Adjust the width as needed */
+    height: 30px;
+    /* Adjust the height as needed */
+    margin-right: 1px;
+    /* Add spacing between the image and text */
+}
 
 .wallet-icon {
     margin-right: 0px;
@@ -28,6 +31,14 @@
     margin-right: 10px;
 }
 
+#stabpool {
+    font-size: 20px;
+    color: rgb(41, 39, 39);
+    margin-left: 50%;
+    background-color: #dde1e4;
+    border-radius: 10px;
+    padding: 5px;
+}
 
 .aside-card {
     background-color: #f5f5f5;
@@ -55,6 +66,78 @@
     padding: 10px;
 
 
+}
+
+/* Custom styling for the details element */
+details {
+    display: block;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Custom icon for closed details */
+details:not([open])::before {
+    content: '\25B6';
+    /* Unicode for right-pointing triangle */
+    position: absolute;
+    left: 0;
+}
+
+/* Custom icon for open details */
+details[open]::before {
+    content: '\25BC';
+    /* Unicode for down-pointing triangle */
+    position: absolute;
+    left: 0;
+}
+#pooldetails {
+    padding-left: 12px;
+}
+/* Withdrw radio style */
+
+.radio-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.radio-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.radio-item:last-child {
+  margin-right: 0;
+}
+
+input[type='radio'] {
+  margin-right: 8px;
+}
+
+.paragraph-container {
+  text-align: center;
+  border: 2px dashed #032b2c;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Additional styles for paragraph text */
+.paragraph-container p {
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .contact .info-box {
@@ -89,7 +172,7 @@
 }
 
 #submitbut:hover {
-    color: white;
+    color: rgb(255, 255, 255);
     height: 50px;
     width: 150px;
     border-radius: 10px;

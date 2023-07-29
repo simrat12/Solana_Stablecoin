@@ -42,7 +42,7 @@ const Navbar = ({
                 <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5 style={{ color: "#333333" }}>ETH</h5>
+                    <h5 style={{ color: "#333333" }}>SOL</h5>
                   </b>
                 </span>
               </li>
@@ -50,7 +50,7 @@ const Navbar = ({
                 <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5 style={{ color: "#333333" }}>LUSD</h5>
+                    <h5 style={{ color: "#333333" }}>SUSD</h5>
                   </b>
                 </span>
               </li>
@@ -58,7 +58,7 @@ const Navbar = ({
                 <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5 style={{ color: "#333333" }}>LQTY</h5>
+                    <h5 style={{ color: "#333333" }}>SOLT</h5>
                   </b>
                 </span>
               </li>
@@ -66,7 +66,7 @@ const Navbar = ({
                 <h6 style={{ color: "#333" }}>0.00</h6>
                 <span>
                   <b>
-                    <h5 style={{ color: "#333333" }}>bLUSD</h5>
+                    <h5 style={{ color: "#333333" }}>bSUSD</h5>
                   </b>
                 </span>
               </li>

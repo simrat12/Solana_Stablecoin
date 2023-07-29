@@ -10,8 +10,8 @@ const Pagebonds = () => {
           <b>You don't have any pending bonds.</b>
         </p>
         <p>
-          You can bond LUSD to obtain Boosted LUSD (bLUSD), a yield-amplified
-          version of LUSD.
+          You can bond SUSD to obtain Boosted SUSD (bSUSD), a yield-amplified
+          version of SUSD.
         </p>
 
         <div className="col-md-12 text-center">

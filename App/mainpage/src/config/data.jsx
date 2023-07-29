@@ -47,7 +47,7 @@ const swiftBountyUse = [
     id: 6,
     icon: <PiNumberSixBold className="icon" />,
     title: 'Automated Collateral Management',
-    text: ` Implement smart contract functionality that automates collateral management, ensuring efficient loan liquidation processes in the event of default, reducing counterparty risk for lenders.
+    text: ` Implement smart contract functionality that automates collateral management, ensuring efficient loan Solstable processes in the event of default, reducing counterparty risk for lenders.
 `,
   },
 ];

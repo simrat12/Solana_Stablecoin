@@ -21,7 +21,7 @@ const Pool = () => {
   if (showForm) {
     return (
       <div id="dash" className="col-md-8">
-        <h2>Stability Pool</h2>
+        <h2>Stability Pool <span id="stabpool">6,453,747 LQTY remaining</span></h2>
 
         <div className="maincard">
           <div className="stake">
@@ -34,7 +34,7 @@ const Pool = () => {
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="0.00 LQTY"
+                  placeholder="0.00 SOLT"
                   value={field1}
                   onChange={(e) => setField1(e.target.value)}
                   required
@@ -55,7 +55,7 @@ const Pool = () => {
             </div>
           </div>
 
-          <p>Enter the amount of LUSD you'd like to deposit.</p>
+          <p>Enter the amount of SUSD you'd like to deposit.</p>
           <div className="col-md-12 text-center">
             <button
               id="cancelbut"
@@ -83,13 +83,13 @@ const Pool = () => {
   return (
     <div id="dash" className="col-md-8">
       <div id="content">
-        <h2>Stability Pool</h2>
+        <h2>Stability Pool <span id="stabpool">6,453,747 LQTY remaining</span></h2>
         <p>
-          <b>You have no LUSD in the Stability Pool.</b>
+          <b>You have no SUSD in the Stability Pool.</b>
         </p>
         <p>
-          You can earn LQTY rewards and buy ETH at a discount by depositing
-          LUSD.
+          You can earn SOLT rewards and buy ETH at a discount by depositing
+          SUSD.
         </p>
 
         <div className="col-md-12 text-center">

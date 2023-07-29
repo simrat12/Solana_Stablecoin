@@ -18,7 +18,7 @@ const Statistics = () => {
           <div className="image-info">
             <div className="details">
               <span>
-                <b>ETH</b>
+                <b>SOL</b>
               </span>
               <br />
               <span>$1937.33</span>
@@ -37,7 +37,7 @@ const Statistics = () => {
           <div className="image-info">
             <div>
               <span>
-                <b>LQTY</b>
+                <b>SOLT</b>
               </span>
               <br />
               <span>$645.33</span>
@@ -56,7 +56,7 @@ const Statistics = () => {
           <div className="image-info">
             <div>
               <span>
-                <b>ETH</b>
+                <b>SOL</b>
               </span>
               <br />
               <span>$543.56</span>
@@ -75,7 +75,7 @@ const Statistics = () => {
           <div className="image-info">
             <div>
               <span>
-                <b>LUSD</b>
+                <b>SUSD</b>
               </span>
               <br />
               <span>$987</span>
@@ -101,22 +101,22 @@ const Statistics = () => {
           </tr>
           <tr>
             <td>TVL</td>
-            <td>402K ETH ($768M)</td>
+            <td>402K SOL ($768M)</td>
           </tr>
           <tr>
             <td>Troves</td>
             <td>1,342</td>
           </tr>
           <tr>
-            <td>LUSD supply</td>
+            <td>SUSD supply</td>
             <td>293M</td>
           </tr>
           <tr>
-            <td>LUSD in Stability Pool</td>
+            <td>SUSD in Stability Pool</td>
             <td>173M (59.1%)</td>
           </tr>
           <tr>
-            <td>Staked LQTY</td>
+            <td>Staked SOLT</td>
             <td>50.5M</td>
           </tr>
           <tr>

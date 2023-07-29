@@ -1,29 +1,31 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
-use anchor_spl::token::{self, Transfer, MintTo, Burn, TokenAccount};
+use anchor_spl::token::{self, MintTo};
 pub mod state;
 use state::{PriceFeed, ErrorCode, AdminConfig};
 
-declare_id!("4Bnb1v32be4zUXwBBrugiDsK3Pgs8uTmEcdk3UbrQxwJ");
+declare_id!("B47wgYdYPiyDfQNJGqbJzMXr5QnmJJMUrXR9p217QW8a");
 
 #[program]
 pub mod sol_anchor_contract {
     use super::*;
 
     pub fn create_accounts(ctx: Context<CreateAccounts>, config: AdminConfig) -> ProgramResult {
-        let pda_account = &mut ctx.accounts.pda_account;
         ctx.accounts.config.set_inner(config);
         let user_deposit_account = &mut ctx.accounts.user_deposit_account;
+        let user_borrow_tracker = &mut ctx.accounts.user_borrow_tracker;
 
         user_deposit_account.user = *ctx.accounts.user_account.key;
         user_deposit_account.deposited_amount = 0;
+
+        user_borrow_tracker.user = *ctx.accounts.user_account.key;
+        user_borrow_tracker.borrowed_amount = 0;
 
         Ok(())
     }
 
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
         // Transfer SOL from user_account to the PDA account
-        let cpi_program = ctx.accounts.system_program.to_account_info();
         let cpi_accounts = [
             ctx.accounts.user_account.to_account_info().clone(),
             ctx.accounts.pda_account.to_account_info().clone(),
@@ -40,7 +42,7 @@ pub mod sol_anchor_contract {
 
     pub fn borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
         let borrower = ctx.accounts.user_deposit_account.user;
-        let user = &ctx.accounts.user;
+        let user = &ctx.accounts.user_account;
         if borrower != *user.key {
             return Err(ErrorCode::Unauthorized.into());
         }
@@ -102,6 +104,9 @@ pub struct CreateAccounts<'info> {
     /// CHECK: Safe
     #[account(init, payer = user_account, seeds = [b"user_deposit_account", user_account.key.as_ref()], bump, space = 8 + 8 + 165)]
     pub user_deposit_account: Account<'info, UserDepositAccount>,
+    /// CHECK: SAFE
+    #[account(init, payer = user_account, seeds = [b"user_borrow_tracker", user_account.key.as_ref()], bump, space = 8 + 8 + 165)]
+    pub user_borrow_tracker: Account<'info, UserBorrowTracker>,
     /// CHECK: Safe
     pub system_program: AccountInfo<'info>,
     #[account(
@@ -132,10 +137,10 @@ pub struct Borrow<'info> {
     /// CHECK: Safe
     pub config: Account<'info, AdminConfig>,
     /// CHECK: Safe
-    #[account(init, payer = user, seeds = [b"user_deposit_account", user.key.as_ref()], bump, space=200)]
+    #[account(mut, seeds = [b"user_deposit_account", user_account.key.as_ref()], bump)]
     pub user_deposit_account: Account<'info, UserDepositAccount>,
     /// CHECK: Safe
-    #[account(init, payer = user, seeds = [b"user_borrow_tracker", user.key.as_ref()], bump, space=200)]
+    #[account(mut, seeds = [b"user_borrow_tracker", user_account.key.as_ref()], bump)]
     pub user_borrow_tracker: Account<'info, UserBorrowTracker>,
     // CHECK: Safe
     #[account(
@@ -150,8 +155,8 @@ pub struct Borrow<'info> {
     /// CHECK: Safe
     pub token_program: AccountInfo<'info>,
     /// CHECK: Safe
-    #[account(mut)]
-    pub user: Signer<'info>,
+    #[account(mut, signer)]
+    pub user_account: AccountInfo<'info>,
     /// CHECK: Safe
     pub system_program: AccountInfo<'info>,
 }

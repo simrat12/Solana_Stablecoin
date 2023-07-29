@@ -4,16 +4,23 @@ const {
     oracleAddress,
     PDA_SEED, 
     USER_DEPOSIT_ACCOUNT_SEED, 
+    USER_BORROW_TRACKER_SEED, 
     userAccount, 
     anchor, 
     solanaWeb3,
     splToken, 
 } = require('./common');
 
-const { createMint, createAssociatedTokenAccount } = require('@solana/spl-token');
-// Call functions similar to how you have done in createAccounts.js
+const { sendAndConfirmTransaction } = require('@solana/web3.js');
 
-const solToUSD = "5U3bH5b6XtG99aVWLqwVzYPVpQiFHytBD68Rz2eFPZd7";
+const { createMint, createAssociatedTokenAccount, getAssociatedTokenAddress } = require('@solana/spl-token');
+const fs = require('fs');
+const { connect } = require('http2');
+
+const solToUSD = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix";
+const adminConfig = anchor.web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(fs.readFileSync('./adminConfig.json', 'utf-8'))));
+console.log("adminConfig is: ", adminConfig);
+console.log("userAccount is: ", userAccount);
 
 async function borrow() {
     const [pdaAccount, pdaNonce] = await anchor.web3.PublicKey.findProgramAddress(
@@ -26,11 +33,14 @@ async function borrow() {
         program.programId
     );
 
-    // console.log("provider connection: ", provider.connection);
-    // console.log("userAccount", userAccount);
-    // console.log("pdaAccount: ", pdaAccount.toBase58());
-    // console.log("userDepositAccount: ", userDepositAccount.toBase58());
-    // console.log(splToken.TOKEN_PROGRAM_ID);
+    const [userBorrowTracker, userBorrowNonce] = await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from(USER_BORROW_TRACKER_SEED), provider.wallet.publicKey.toBuffer()], 
+        program.programId
+    );
+
+    console.log("pdaAccount is: ", pdaAccount);
+    console.log("userDepositAccount is: ", userDepositAccount);
+    console.log("userBorrowTracker is: ", userBorrowTracker);
 
     console.log("creating mint account");
     const mint = await createMint(
@@ -43,27 +53,49 @@ async function borrow() {
         undefined,
         splToken.TOKEN_PROGRAM_ID
     );
-    
-    const borrowerDebtTokenAccount = await createAssociatedTokenAccount(
-        provider.connection, // connection
-        userAccount, // payer
-        mint, // mint
-        userAccount.publicKey, // owner
-        undefined, // confirmOptions
-        splToken.TOKEN_PROGRAM_ID, // programId
-        splToken.ASSOCIATED_TOKEN_PROGRAM_ID // associatedTokenProgramId
+
+    const associatedAddress = await getAssociatedTokenAddress(
+        provider.wallet.publicKey,
+        mint,
+        splToken.TOKEN_PROGRAM_ID,
+        splToken.ASSOCIATED_TOKEN_PROGRAM_ID
     );
+
+    console.log("associatedAddress is: ", associatedAddress);
+
+    const accountInfo = await provider.connection.getAccountInfo(associatedAddress);
+    console.log("accountInfo is: ", accountInfo);
+    let borrowerDebtTokenAccount;
+
+    if (accountInfo === null) {
+        borrowerDebtTokenAccount = await createAssociatedTokenAccount(
+            provider.connection,
+            userAccount,
+            mint,
+            userAccount.publicKey,
+            undefined,
+            splToken.TOKEN_PROGRAM_ID,
+            splToken.ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+    } else {
+        borrowerDebtTokenAccount = associatedAddress;
+    }
+
+    console.log("borrowerDebtTokenAccount is: ", borrowerDebtTokenAccount);
+    console.log("user key is: ", userAccount.key); // issue is probably here
+    console.log("user deposit account is: ", userDepositAccount.user);
 
     console.log("Borrowing...");
     await program.rpc.borrow(new anchor.BN(5), {
         accounts: {
+            config: adminConfig.publicKey,
             userDepositAccount: userDepositAccount,
-            userBorrowTracker: userAccount.publicKey,
+            userBorrowTracker: userBorrowTracker, 
             pythLoanAccount: new anchor.web3.PublicKey(solToUSD),
             borrowerDebtTokenAccount: borrowerDebtTokenAccount,
             debtTokenMint: mint,
             tokenProgram: splToken.TOKEN_PROGRAM_ID,
-            user: userAccount.publicKey,
+            userAccount: userAccount.publicKey,
             systemProgram: solanaWeb3.SystemProgram.programId,
         },
         signers: [userAccount],
@@ -72,3 +104,4 @@ async function borrow() {
 }
 
 borrow().catch(err => console.error(err));
+

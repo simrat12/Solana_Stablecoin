@@ -71,4 +71,6 @@ pub enum ErrorCode {
     NotEnoughCollateral,
     #[msg("Invalid owner.")]
     InvalidOwner,
+    #[msg("Failed to create Program Derived Address")]
+    PDAError, // New error variant
 }

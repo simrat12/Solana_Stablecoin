@@ -11,7 +11,6 @@ const {
     splToken, 
 } = require('./common');
 
-const { sendAndConfirmTransaction } = require('@solana/web3.js');
 
 const { createMint, createAssociatedTokenAccount, getAssociatedTokenAddress } = require('@solana/spl-token');
 const fs = require('fs');
@@ -37,7 +36,8 @@ async function borrow() {
         [Buffer.from(USER_BORROW_TRACKER_SEED), provider.wallet.publicKey.toBuffer()], 
         program.programId
     );
-
+    
+    console.log("provider wallet public key is: ", provider.wallet.publicKey);
     console.log("pdaAccount is: ", pdaAccount);
     console.log("userDepositAccount is: ", userDepositAccount);
     console.log("userBorrowTracker is: ", userBorrowTracker);
@@ -53,6 +53,8 @@ async function borrow() {
         undefined,
         splToken.TOKEN_PROGRAM_ID
     );
+
+    console.log("mint is: ", mint);
 
     const associatedAddress = await getAssociatedTokenAddress(
         provider.wallet.publicKey,
@@ -77,13 +79,14 @@ async function borrow() {
             splToken.TOKEN_PROGRAM_ID,
             splToken.ASSOCIATED_TOKEN_PROGRAM_ID
         );
+        console.log("borrowerDebtTokenAccount is (defined here): ", borrowerDebtTokenAccount);
     } else {
         borrowerDebtTokenAccount = associatedAddress;
     }
 
     console.log("borrowerDebtTokenAccount is: ", borrowerDebtTokenAccount);
-    console.log("user key is: ", userAccount.key); // issue is probably here
-    console.log("user deposit account is: ", userDepositAccount.user);
+    console.log("user key is: ", userAccount.owner); // issue is probably here
+    console.log("user deposit account is: ", userDepositAccount.owner);
 
     console.log("Borrowing...");
     await program.rpc.borrow(new anchor.BN(5), {
@@ -97,6 +100,7 @@ async function borrow() {
             tokenProgram: splToken.TOKEN_PROGRAM_ID,
             userAccount: userAccount.publicKey,
             systemProgram: solanaWeb3.SystemProgram.programId,
+            pdaAccount: pdaAccount,
         },
         signers: [userAccount],
     });

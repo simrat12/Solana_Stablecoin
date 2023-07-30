@@ -4,7 +4,7 @@ use anchor_spl::token::{self, MintTo};
 pub mod state;
 use state::{PriceFeed, ErrorCode, AdminConfig};
 
-declare_id!("B47wgYdYPiyDfQNJGqbJzMXr5QnmJJMUrXR9p217QW8a");
+declare_id!("GkPTy4QjES2JJMYVR2C7EkhRbjjTa9d9YLZoXu9RJDEK");
 
 #[program]
 pub mod sol_anchor_contract {
@@ -17,9 +17,11 @@ pub mod sol_anchor_contract {
 
         user_deposit_account.user = *ctx.accounts.user_account.key;
         user_deposit_account.deposited_amount = 0;
+        msg!("User deposit account: {:?}", user_deposit_account.user);
 
         user_borrow_tracker.user = *ctx.accounts.user_account.key;
         user_borrow_tracker.borrowed_amount = 0;
+        msg!("User borrow tracker: {:?}", user_borrow_tracker.user);
 
         Ok(())
     }
@@ -43,11 +45,15 @@ pub mod sol_anchor_contract {
     pub fn borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
         let borrower = ctx.accounts.user_deposit_account.user;
         let user = &ctx.accounts.user_account;
+        msg!("Borrower: {:?}", borrower);
+        msg!("User: {:?}", user.key);
         if borrower != *user.key {
             return Err(ErrorCode::Unauthorized.into());
         }
-
-        if *ctx.accounts.borrower_debt_token_account.owner != *user.key {
+    
+        let owner_in_data = token::accessor::authority(&ctx.accounts.borrower_debt_token_account.to_account_info())?;
+        msg!("owner in data: {:?}", owner_in_data);
+        if owner_in_data != *user.key {
             return Err(ErrorCode::Unauthorized.into());
         }
         
@@ -55,30 +61,41 @@ pub mod sol_anchor_contract {
         if token_mint != *ctx.accounts.debt_token_mint.key {
             return Err(ErrorCode::InvalidArgument.into());
         }
-
+    
         let loan_feed = &ctx.accounts.pyth_loan_account;
         let current_timestamp1 = Clock::get()?.unix_timestamp;
         let loan_price = loan_feed.get_price_no_older_than(current_timestamp1, 60).ok_or(ErrorCode::PythOffline)?;
         let loan_max_price = loan_price.price.checked_add(loan_price.conf as i64).ok_or(ErrorCode::Overflow)?;
         let value_of_collateral = ctx.accounts.user_deposit_account.deposited_amount * loan_max_price as u64;
-
+    
         if value_of_collateral < (amount * 100) {
             return Err(error!(ErrorCode::NotEnoughCollateral));
         }
 
+        msg!("Value of collateral: {:?}", value_of_collateral);
+    
+        // Derive your PDA here.
+        let (pda_account, bump_seed) = Pubkey::find_program_address(&[b"pda_account", user.key.as_ref()], &ctx.program_id);
+        let seeds = &[b"pda_account", user.key.as_ref(), &[bump_seed]];
+        let seeds2: &[&[&[u8]]] = &[seeds];
+        
         let cpi_accounts = MintTo {
             mint: ctx.accounts.debt_token_mint.to_account_info(),
             to: ctx.accounts.borrower_debt_token_account.to_account_info(),
-            authority: ctx.accounts.token_program.to_account_info(),
+            authority: ctx.accounts.pda_account.to_account_info(), // Assuming this account info represents the PDA
         };
-
+        
         let cpi_program = ctx.accounts.token_program.to_account_info().clone();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        
+        // construct the context for the CPI call, including the seeds for the signer
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, seeds2);
+        
         token::mint_to(cpi_ctx, amount)?;
-
+        
         ctx.accounts.user_borrow_tracker.borrowed_amount += amount;
         Ok(())
     }
+    
 }
 
 #[account]
@@ -159,6 +176,9 @@ pub struct Borrow<'info> {
     pub user_account: AccountInfo<'info>,
     /// CHECK: Safe
     pub system_program: AccountInfo<'info>,
+    /// CHECK: Safe
+    #[account(mut, seeds = [b"pda_account", user_account.key.as_ref()], bump)]
+    pub pda_account: AccountInfo<'info>,
 }
 
 

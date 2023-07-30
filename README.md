@@ -128,7 +128,19 @@ You should have the following installed:
     node createAccounts.js
     ```
 
-4. Run `deposit` script and `borrow` script
+4. Run `deposit`, `borrow` and `repay` scripts to interact with the program:
+
+    ```
+    node deposit.js
+    ```
+    ```
+    node borrow.js
+    ```
+
+    replace the address in line 21 of repay.js with the address of your debt token mint address - this can be found in the logs of the prevoius command
+    ```
+    node repay.js
+    ```
 
 
 You can now use Node.js to call each function in the smart contract. Be sure to replace `YourProgramAddress` with the address of your deployed program when calling these functions.

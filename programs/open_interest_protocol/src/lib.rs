@@ -103,6 +103,44 @@ pub mod sol_anchor_contract {
         ctx.accounts.user_borrow_tracker.borrowed_amount += amount;
         Ok(())
     }
+
+    pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
+        let borrower = ctx.accounts.user_deposit_account.user;
+        let user = &ctx.accounts.user_account;
+        if borrower != *user.key {
+            return Err(ErrorCode::Unauthorized.into());
+        }
+    
+        let loan_feed = &ctx.accounts.pyth_loan_account;
+        let current_timestamp1 = Clock::get()?.unix_timestamp;
+        let loan_price = loan_feed.get_price_no_older_than(current_timestamp1, 60).ok_or(ErrorCode::PythOffline)?;
+    
+        let token_value_in_sol = amount / loan_price.price as u64;
+        if ctx.accounts.user_deposit_account.deposited_amount < token_value_in_sol {
+            return Err(error!(ErrorCode::NotEnoughCollateral));
+        }
+    
+        // Burn the tokens
+        let cpi_accounts = token::Burn {
+            mint: ctx.accounts.debt_token_mint.to_account_info(),
+            from: ctx.accounts.borrower_debt_token_account.to_account_info(),
+            authority: ctx.accounts.user_account.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info().clone();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::burn(cpi_ctx, amount)?;
+
+        msg!("Repaid amount: {:?}", amount);
+    
+        // Transfer SOL from the PDA account back to the user_account
+        // Directly modify the lamports within the accounts
+        **ctx.accounts.pda_account.to_account_info().try_borrow_mut_lamports()? -= token_value_in_sol;
+        **ctx.accounts.user_account.to_account_info().try_borrow_mut_lamports()? += token_value_in_sol;
+    
+        ctx.accounts.user_borrow_tracker.borrowed_amount -= amount;
+        Ok(())
+    }    
+    
     
 }
 
@@ -189,6 +227,40 @@ pub struct Borrow<'info> {
     #[account(mut, seeds = [b"pda_account", user_account.key.as_ref()], bump)]
     pub pda_account: AccountInfo<'info>,
 }
+
+#[derive(Accounts)]
+pub struct Repay<'info> {
+    /// CHECK: Safe
+    #[account(mut, signer)]
+    pub user_account: AccountInfo<'info>,
+    /// CHECK: Safe
+    #[account(mut, seeds = [b"pda_account", user_account.key.as_ref()], bump)]
+    pub pda_account: AccountInfo<'info>,
+    /// CHECK: Safe
+    #[account(mut, seeds = [b"user_deposit_account", user_account.key.as_ref()], bump)]
+    pub user_deposit_account: Account<'info, UserDepositAccount>,
+    /// CHECK: Safe
+    #[account(mut, seeds = [b"user_borrow_tracker", user_account.key.as_ref()], bump)]
+    pub user_borrow_tracker: Account<'info, UserBorrowTracker>,
+    /// CHECK: Safe
+    #[account(
+        address = config.loan_price_feed_id @ ErrorCode::InvalidArgument
+    )]
+    pub pyth_loan_account: Account<'info, PriceFeed>,
+    /// CHECK: Safe
+    #[account(mut)]
+    pub borrower_debt_token_account: AccountInfo<'info>,
+    /// CHECK: Safe
+    #[account(mut)]
+    pub debt_token_mint: AccountInfo<'info>,
+    /// CHECK: Safe
+    pub token_program: AccountInfo<'info>,
+    /// CHECK: Safe
+    pub system_program: AccountInfo<'info>,
+    /// CHECK: Safe
+    pub config: Account<'info, AdminConfig>,
+}
+
 
 
 

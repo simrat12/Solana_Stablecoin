@@ -57,13 +57,14 @@ async function borrow() {
     console.log("mint is: ", mint);
 
     const associatedAddress = await getAssociatedTokenAddress(
+        mint, // Replace with the actual debt token mint address
         provider.wallet.publicKey,
-        mint,
+        undefined, // Replace with the boolean value that allows the owner account to be a PDA (Program Derived Address)
         splToken.TOKEN_PROGRAM_ID,
         splToken.ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
-    console.log("associatedAddress is: ", associatedAddress);
+    console.log("associatedAddress is: ", associatedAddress);  
 
     const accountInfo = await provider.connection.getAccountInfo(associatedAddress);
     console.log("accountInfo is: ", accountInfo);

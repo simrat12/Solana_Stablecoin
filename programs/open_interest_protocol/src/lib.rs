@@ -4,7 +4,7 @@ use anchor_spl::token::{self, MintTo};
 pub mod state;
 use state::{PriceFeed, ErrorCode, AdminConfig};
 
-declare_id!("GkPTy4QjES2JJMYVR2C7EkhRbjjTa9d9YLZoXu9RJDEK");
+declare_id!("CvhsZhKCwMDjB7z77ixon6NU4fzEViu2TnvMvwoEY82V");
 
 #[program]
 pub mod sol_anchor_contract {
@@ -76,6 +76,8 @@ pub mod sol_anchor_contract {
     
         // Derive your PDA here.
         let (pda_account, bump_seed) = Pubkey::find_program_address(&[b"pda_account", user.key.as_ref()], &ctx.program_id);
+        msg!("PDA account from fn call: {:?}", pda_account);
+        msg!("Bump seed from fn call: {:?}", bump_seed);
         let seeds = &[b"pda_account", user.key.as_ref(), &[bump_seed]];
         let seeds2: &[&[&[u8]]] = &[seeds];
         
@@ -84,6 +86,10 @@ pub mod sol_anchor_contract {
             to: ctx.accounts.borrower_debt_token_account.to_account_info(),
             authority: ctx.accounts.pda_account.to_account_info(), // Assuming this account info represents the PDA
         };
+
+        // msg!("mint address in struct: {:?}", ctx.accounts.debt_token_mint.to_account_info());
+        // msg!("to address in struct: {:?}", ctx.accounts.borrower_debt_token_account.to_account_info());
+        // msg!("authority address in struct: {:?}", ctx.accounts.pda_account.to_account_info());
         
         let cpi_program = ctx.accounts.token_program.to_account_info().clone();
         
@@ -92,6 +98,8 @@ pub mod sol_anchor_contract {
         
         token::mint_to(cpi_ctx, amount)?;
         
+        msg!("Borrowed amount: {:?}", amount);
+
         ctx.accounts.user_borrow_tracker.borrowed_amount += amount;
         Ok(())
     }
@@ -168,6 +176,7 @@ pub struct Borrow<'info> {
     #[account(mut)]
     pub borrower_debt_token_account: AccountInfo<'info>,
     /// CHECK: Safe
+    #[account(mut)]
     pub debt_token_mint: AccountInfo<'info>,
     /// CHECK: Safe
     pub token_program: AccountInfo<'info>,

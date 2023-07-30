@@ -85,8 +85,6 @@ async function borrow() {
     }
 
     console.log("borrowerDebtTokenAccount is: ", borrowerDebtTokenAccount);
-    console.log("user key is: ", userAccount.owner); // issue is probably here
-    console.log("user deposit account is: ", userDepositAccount.owner);
 
     console.log("Borrowing...");
     await program.rpc.borrow(new anchor.BN(5), {

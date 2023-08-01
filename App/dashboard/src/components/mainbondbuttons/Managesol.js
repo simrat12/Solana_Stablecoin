@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Deposit from "./managesol/Deposit";
 import Rewards from "./managesol/Rewards";
-import Stake from "./managesol/Stake";
-import Unstake from "./managesol/Unstake";
-import Withdraw from "./managesol/Withdraw";
+import Borrow from "./managesol/Borrow";
+import Repay from "./managesol/Repay";
+import Deposit2 from "./managesol/Deposit2";
 import { Program, AnchorProvider } from "@project-serum/anchor";
-import { Keypair, PublicKey, SystemProgram, web3, Connection, clusterApiUrl } from "@solana/web3.js";
+import { Keypair, PublicKey, SystemProgram, Transaction, Connection, clusterApiUrl} from "@solana/web3.js";
+import { createMint, createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, MintLayout, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, createInitializeMintInstruction } from '@solana/spl-token';
 import IDL from "./contractIDL/sol_anchor_contract.json";
 import { Buffer } from 'buffer';
+import BN from 'bn.js';
 import BufferMock from './bufferMock';
+import { set } from "@project-serum/anchor/dist/cjs/utils/features";
+import { associated } from "@project-serum/anchor/dist/cjs/utils/pubkey";
+import { associatedAddress } from "@project-serum/anchor/dist/cjs/utils/token";
 
 const PROGRAM_ID = "CvhsZhKCwMDjB7z77ixon6NU4fzEViu2TnvMvwoEY82V";
 const PROGRAM_ADDRESS = new PublicKey(PROGRAM_ID);
@@ -21,7 +26,14 @@ const Managesol = ({ onClose, activeTab }) => {
   const [localActiveTab, setLocalActiveTab] = useState(activeTab);
   const [provider, setProvider] = useState(null);
   const [program, setProgram] = useState(null);
+  const [adminConfig, setAdminConfig] = useState(null);
+  const [pda_account, setPdaAccount] = useState(null);
+  const [user_deposit_account, setUserDepositAccount] = useState(null);
+  const [user_borrow_tracker, setUserBorrowTracker] = useState(null);
+  const [mint2, setMint] = useState(null);
+  const [borrowerDebtTokenAccount, setBorrowerDebtTokenAccount] = useState(null);
   const connection = new Connection("https://api.devnet.solana.com");
+  
 
   useEffect(() => {
     setLocalActiveTab(activeTab);
@@ -75,6 +87,7 @@ const Managesol = ({ onClose, activeTab }) => {
       [Buffer.from(PDA_SEED), ownerPubkey],
       program.programId
     );
+    setPdaAccount(pdaAccount);
     
     console.log("pdaAccount is: ", pdaAccount);
     
@@ -82,11 +95,14 @@ const Managesol = ({ onClose, activeTab }) => {
       [Buffer.from(USER_DEPOSIT_ACCOUNT_SEED), ownerPubkey],
       program.programId
     );
+    setUserDepositAccount(userDepositAccount);
     
     const [userBorrowTracker] = await PublicKey.findProgramAddress(
       [Buffer.from(USER_BORROW_TRACKER_SEED), ownerPubkey],
       program.programId
     );
+
+    setUserBorrowTracker(userBorrowTracker);
 
     const adminConfigData = {
       loanPriceFeedId: new PublicKey(SOL_TO_USD),
@@ -108,7 +124,8 @@ const Managesol = ({ onClose, activeTab }) => {
       });
 
       // Save the secret key to localStorage instead of file system on the client side
-      localStorage.setItem('adminConfig', JSON.stringify(Array.from(adminConfig.secretKey)));
+      localStorage.setItem('admin_pubkey_bytes', JSON.stringify(Array.from(adminConfig.publicKey.toBytes())));
+      setAdminConfig(adminConfig);
 
       console.log("Accounts created.");
     } catch (error) {
@@ -116,13 +133,220 @@ const Managesol = ({ onClose, activeTab }) => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const deposit2 = async () => {
+    console.log("Depositing...");
+  
+    // Generate instruction for the deposit action
+    const instruction = program.instruction.deposit(new BN(5), {
+      accounts: {
+        userAccount: window.solana.publicKey,
+        pdaAccount: pda_account,
+        userDepositAccount: user_deposit_account,
+        systemProgram: SystemProgram.programId,
+      },
+    });
+  
+    // Create a transaction
+    const transaction = new Transaction().add(instruction);
+  
+    // Request user's signature and send the transaction
+    try {
+      let { blockhash } = await connection.getRecentBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = window.solana.publicKey;
+  
+      let signedTransaction = await window.solana.signTransaction(transaction);
+      let txid = await connection.sendRawTransaction(signedTransaction.serialize());
+      console.log("Deposit transaction sent. Transaction ID:", txid);
+    } catch (error) {
+      console.error("Failed to deposit:", error);
+    }
+  };
+
+  const borrow = async () => {
+    console.log("creating mint account");
+    
+    const mintRent = await connection.getMinimumBalanceForRentExemption(MintLayout.span);
+    const ownerPubkey = Buffer.from(window.solana.publicKey.toBytes());
+  
+    console.log("ownerPubkey is: ", ownerPubkey);
+    
+    const [pdaAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from(PDA_SEED), ownerPubkey],
+      program.programId
+    );
+  
+    let mint = Keypair.generate();
+    console.log("mint is: ", mint.publicKey);
+    console.log("accounts is: ", window.solana.publicKey);
+    let mint_pubkey = new PublicKey(mint.publicKey);
+    setMint(mint_pubkey);
+    localStorage.setItem('mint_pubkey', JSON.stringify(Array.from(mint_pubkey.toBytes())));
+    console.log("pda is: ", pdaAccount);
+  
+    const associatedAddress = await getAssociatedTokenAddress(mint_pubkey, provider.wallet.publicKey, undefined, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID);
+    localStorage.setItem('associatedAddress', JSON.stringify(Array.from(associatedAddress.toBytes())));
+  
+    const transaction = new Transaction().add(
+      SystemProgram.createAccount({
+        fromPubkey: window.solana.publicKey,
+        newAccountPubkey: mint_pubkey,
+        lamports: mintRent,
+        space: MintLayout.span,
+        programId: TOKEN_PROGRAM_ID,
+      }),
+      createInitializeMintInstruction(
+        mint_pubkey,
+        9,
+        pdaAccount,
+        pdaAccount,
+        TOKEN_PROGRAM_ID,
+      ),
+      createAssociatedTokenAccountInstruction(
+        window.solana.publicKey, // payer of the initialization fees
+        associatedAddress, // new associated token account
+        window.solana.publicKey, // owner of the new account
+        mint_pubkey, // token mint account
+        TOKEN_PROGRAM_ID, // SPL Token program account
+        ASSOCIATED_TOKEN_PROGRAM_ID // SPL Associated Token program account
+      )
+    );
+  
+    console.log("mint is: ", mint_pubkey);
+  
+    const associatedAddress_bytes = JSON.parse(localStorage.getItem('associatedAddress'));
+    const associatedAddressPK = new PublicKey(associatedAddress_bytes);
+    let borrowerDebtTokenAccount = associatedAddressPK;
+  
+    const [userDepositAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from(USER_DEPOSIT_ACCOUNT_SEED), Buffer.from(window.solana.publicKey.toBytes())],
+      program.programId,
+    );
+  
+    const [userBorrowTracker] = await PublicKey.findProgramAddress(
+      [Buffer.from(USER_BORROW_TRACKER_SEED), Buffer.from(window.solana.publicKey.toBytes())],
+      program.programId,
+    );
+  
+    let admin_config_bytes = JSON.parse(localStorage.getItem('admin_pubkey_bytes'));
+    let admin_config = new PublicKey(admin_config_bytes);
+    console.log("adminConfig is: ", adminConfig.publicKey);
+  
+    console.log("borrowerDebtTokenAccount is: ", borrowerDebtTokenAccount);
+    setBorrowerDebtTokenAccount(borrowerDebtTokenAccount);
+    localStorage.setItem('borrowerDebtTokenAccount', JSON.stringify(Array.from(borrowerDebtTokenAccount.toBytes())));
+    console.log("userDepositAccount is: ", userDepositAccount);
+    console.log("userBorrowTracker is: ", userBorrowTracker);
+    console.log("mint_pubkey is: ", mint_pubkey);
+    console.log("admin_config is: ", admin_config);
+    console.log("pdaAccount is: ", pdaAccount);
+  
+    console.log("Borrowing...");
+    const borrowInstruction = program.instruction.borrow(new BN(1), {
+      accounts: {
+        config: admin_config,
+        userDepositAccount: userDepositAccount,
+        userBorrowTracker: userBorrowTracker, 
+        pythLoanAccount: new PublicKey(SOL_TO_USD),
+        borrowerDebtTokenAccount: borrowerDebtTokenAccount,
+        debtTokenMint: mint_pubkey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        userAccount: window.solana.publicKey,
+        systemProgram: SystemProgram.programId,
+        pdaAccount: pdaAccount,
+      },
+    });
+  
+    // Adding the borrow instruction to the transaction
+    transaction.add(borrowInstruction);
+  
+    // This is where we request Phantom to sign the transaction
+    let { blockhash } = await connection.getRecentBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = window.solana.publicKey;
+    transaction.partialSign(mint);
+  
+    try {
+      const signedTransaction = await window.solana.signTransaction(transaction);
+      const transactionId = await connection.sendRawTransaction(signedTransaction.serialize());
+    
+      console.log("Mint and associated token account created with id: ", transactionId);
+    } catch (error) {console.error("Failed to create mint and associated token account and borrow:", error);
+  }};
+
+  async function repay() {
+    const payer = window.solana.publicKey;
+    const repayAmount = new BN(1); // Replace with the desired repay amount
+    let mint_pubkey_bytes = JSON.parse(localStorage.getItem('mint_pubkey'));
+    let mint_pubkey = new PublicKey(mint_pubkey_bytes);
+    let admin_config_bytes = JSON.parse(localStorage.getItem('admin_pubkey_bytes'));
+    let admin_config_pubkey = new PublicKey(admin_config_bytes);
+    const [pdaAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from(PDA_SEED), Buffer.from(window.solana.publicKey.toBytes())],
+      program.programId,
+    );
+
+    const [userDepositAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from(USER_DEPOSIT_ACCOUNT_SEED), Buffer.from(window.solana.publicKey.toBytes())],
+      program.programId,
+    );
+
+    const [userBorrowTracker] = await PublicKey.findProgramAddress(
+      [Buffer.from(USER_BORROW_TRACKER_SEED), Buffer.from(window.solana.publicKey.toBytes())],
+      program.programId,
+    );
+
+    let borrowerDebtTokenAccount_bytes = JSON.parse(localStorage.getItem('borrowerDebtTokenAccount'));
+    let borrowerDebtTokenAccount = new PublicKey(borrowerDebtTokenAccount_bytes);
+
+    // Create the instruction for the transaction
+    const instruction = program.instruction.repay(repayAmount, {
+        accounts: {
+            userAccount: window.solana.publicKey,
+            pdaAccount: pdaAccount,
+            userDepositAccount: userDepositAccount,
+            userBorrowTracker: userBorrowTracker,
+            pythLoanAccount: new PublicKey(SOL_TO_USD),
+            borrowerDebtTokenAccount: borrowerDebtTokenAccount,
+            debtTokenMint: mint_pubkey,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            systemProgram: SystemProgram.programId,
+            config: admin_config_pubkey,
+        },
+    });
+
+    const transaction = new Transaction().add(instruction);
+
+    // Fetch recent blockhash
+    let { blockhash } = await connection.getRecentBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = payer;
+
+    // Request user's signature via Phantom
+    const signedTransaction = await window.solana.signTransaction(transaction);
+    const txid = await connection.sendRawTransaction(signedTransaction.serialize());
+    console.log("Transaction sent. Transaction ID:", txid);
+}
+
+
+
+  const handleSubmit = () => {
     if (localActiveTab === "DEPOSIT") {
       console.log("Creating accounts...");
       createAccounts();
     }
-    // Add logic for other tabs here
+    if (localActiveTab === "DEPOSIT2") {
+      console.log("Depositing...");
+      deposit2();
+    }
+    if (localActiveTab === "BORROW") {
+      console.log("Borrowing...");
+      borrow();
+    }
+    if (localActiveTab === "REPAY") {
+      console.log("Repaying...");
+      repay();
+    }
   };
 
   return (
@@ -144,27 +368,27 @@ const Managesol = ({ onClose, activeTab }) => {
             </button>
             <button
               style={
-                localActiveTab === "WITHDRAW" ? activeButtonStyle : buttonStyle
+                localActiveTab === "DEPOSIT2" ? activeButtonStyle : buttonStyle
               }
-              onClick={() => setLocalActiveTab("WITHDRAW")}
+              onClick={() => setLocalActiveTab("DEPOSIT2")}
             >
-              WITHDRAW
+              DEPOSIT2
             </button>
             <button
               style={
-                localActiveTab === "STAKE" ? activeButtonStyle : buttonStyle
+                localActiveTab === "BORROW" ? activeButtonStyle : buttonStyle
               }
-              onClick={() => setLocalActiveTab("STAKE")}
+              onClick={() => setLocalActiveTab("BORROW")}
             >
-              STAKE
+              BORROW
             </button>
             <button
               style={
-                localActiveTab === "UNSTAKE" ? activeButtonStyle : buttonStyle
+                localActiveTab === "REPAY" ? activeButtonStyle : buttonStyle
               }
-              onClick={() => setLocalActiveTab("UNSTAKE")}
+              onClick={() => setLocalActiveTab("REPAY")}
             >
-              UNSTAKE
+              REPAY
             </button>
             <button
               style={
@@ -178,19 +402,19 @@ const Managesol = ({ onClose, activeTab }) => {
         </div>
         <div>
           {localActiveTab === "DEPOSIT" && (
-            <Deposit handleSubmit={createAccounts} onClose={onClose} />
+            <Deposit handleSubmit={handleSubmit} onClose={onClose} />
           )}
 
-          {localActiveTab === "WITHDRAW" && (
-            <Withdraw handleSubmit={handleSubmit} onClose={onClose} />
+          {localActiveTab === "DEPOSIT2" && (
+            <Deposit2 handleSubmit={handleSubmit} onClose={onClose} />
           )}
 
-          {localActiveTab === "STAKE" && (
-            <Stake handleSubmit={handleSubmit} onClose={onClose} />
+          {localActiveTab === "BORROW" && (
+            <Borrow handleSubmit={handleSubmit} onClose={onClose} />
           )}
 
-          {localActiveTab === "UNSTAKE" && (
-            <Unstake handleSubmit={handleSubmit} onClose={onClose} />
+          {localActiveTab === "REPAY" && (
+            <Repay handleSubmit={handleSubmit} onClose={onClose} />
           )}
 
           {localActiveTab === "REWARDS" && (

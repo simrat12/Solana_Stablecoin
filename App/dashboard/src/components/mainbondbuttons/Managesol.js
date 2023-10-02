@@ -15,7 +15,7 @@ import { set } from "@project-serum/anchor/dist/cjs/utils/features";
 import { associated } from "@project-serum/anchor/dist/cjs/utils/pubkey";
 import { associatedAddress } from "@project-serum/anchor/dist/cjs/utils/token";
 
-const PROGRAM_ID = "CvhsZhKCwMDjB7z77ixon6NU4fzEViu2TnvMvwoEY82V";
+const PROGRAM_ID = "Cb3e9p9PPNF7XHrpTrH7oyofm5J3Pj3Yn3KiSFagkQhG";
 const PROGRAM_ADDRESS = new PublicKey(PROGRAM_ID);
 const PDA_SEED = "pda_account";
 const USER_DEPOSIT_ACCOUNT_SEED = "user_deposit_account";
@@ -32,7 +32,7 @@ const Managesol = ({ onClose, activeTab }) => {
   const [user_borrow_tracker, setUserBorrowTracker] = useState(null);
   const [mint2, setMint] = useState(null);
   const [borrowerDebtTokenAccount, setBorrowerDebtTokenAccount] = useState(null);
-  const connection = new Connection("https://api.devnet.solana.com");
+  const connection = new Connection("https://api.mainnet-beta.solana.com");
   
 
   useEffect(() => {
